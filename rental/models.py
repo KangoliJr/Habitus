@@ -1,19 +1,7 @@
 from django.db import models
+from django.conf import settings
 import os
-# Create your models here.
-class Landlord(models.Model):
-    landlord_id = models.CharField(max_length=20, primary_key=True)
-    landlord_name = models.CharField(max_length=20)
-    
-    def __str__(self):
-        return self.landlord_name
 
-class Tenant(models.Model):
-    tenant_id = models.CharField(max_length=100, primary_key=True)
-    tenant_name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.tenant_name
-    
 class RentalHouse(models.Model):
     FURNISHING_STYLES = [
         ('Fully_Furnished', 'Fully Furnished'),
@@ -40,7 +28,7 @@ class RentalHouse(models.Model):
         ('other', 'Other'),
     ]
     house_id = models.CharField(max_length=100, primary_key=True)
-    landlord_name = models.ForeignKey(Landlord,on_delete=models.CASCADE, related_name='houses')
+    landlord = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_houses')
     description = models.TextField()
     price = models.FloatField()
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
@@ -51,11 +39,11 @@ class RentalHouse(models.Model):
     amenities = models.TextField()
     
     def __str__(self):
-        return f"House {self.house_id} by {self.landlord.landlord_name}"
+        return f"House {self.house_id} by {self.landlord.username}"
     
 
 class Booking(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='bookings')
+    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_bookings')
     house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='bookings')
     check_in_date = models.DateField()
     check_out_date = models.DateField()
@@ -63,7 +51,7 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Booking for {self.house.house_id} by {self.tenant.tenant_id}"
+        return f"Booking for {self.house.house_id} by {self.tenant.username}"
     
 
 class Checkdates(models.Model):

@@ -1,20 +1,7 @@
 from django.db import models
+from django.conf import settings
 import os
 
-# Create your models here.
-class Host(models.Model):
-    host_id = models.CharField(max_length=20, primary_key=True)
-    hostname = models.CharField(max_length=20)
-    
-    def __str__(self):
-        return self.hostname
-    
-class Customer(models.Model):
-    customer_id = models.CharField(max_length=100, primary_key=True)
-    customer_name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.customer_id
- 
 class AirbnbHouse(models.Model):
     FURNISHING_STYLES = [
         ('Fully_Furnished', 'Fully Furnished'),
@@ -40,7 +27,7 @@ class AirbnbHouse(models.Model):
         ('other', 'Other'),
     ]
     house_id = models.CharField(max_length=100, primary_key=True)
-    host_name = models.ForeignKey(Host,on_delete=models.CASCADE, related_name='houses')
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='airbnb_houses')
     description = models.TextField()
     price = models.FloatField()
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
@@ -51,10 +38,10 @@ class AirbnbHouse(models.Model):
     amenities = models.TextField()
     
     def __str__(self):
-        return f"House {self.house_id} by {self.host.hostname}"
+        return f"House {self.house_id} by {self.host.username}"
     
 class Booking(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bookings')
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='airbnb_bookings')
     house = models.ForeignKey(AirbnbHouse, on_delete=models.CASCADE, related_name='bookings')
     check_in_date = models.DateField()
     check_out_date = models.DateField()
@@ -62,7 +49,7 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Booking for {self.house.house_id} by {self.customer.customer_id}"
+        return f"Booking for {self.house.house_id} by {self.customer.username}"
     
 
 class Checkdates(models.Model):

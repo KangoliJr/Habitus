@@ -1,25 +1,13 @@
 from django.db import models
+from django.conf import settings
 import os
 
 # Create your models here.
-class Owner(models.Model):
-    owner_id = models.CharField(max_length=20, primary_key=True)
-    owner_name = models.CharField(max_length=20)
-    
-    def __str__(self):
-        return self.owner_name
-    
-class Buyer(models.Model):
-    buyer_id = models.CharField(max_length=100, primary_key=True)
-    buyer_name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.buyer_name
-
 class OwnedHouse(models.Model):
     FURNISHING_STYLES = [
         ('Fully_Furnished', 'Fully Furnished'),
         ('Semi_Furnished', 'Semi Furnished'),
-        ('None_Furnished', 'None Furnished'),
+        ('unfurnished', 'Unfurnished'),
     ]
     
     BEDROOM_TYPES = [
@@ -41,7 +29,7 @@ class OwnedHouse(models.Model):
         ('other', 'Other'),
     ]
     house_id = models.CharField(max_length=100, primary_key=True)
-    owner_name = models.ForeignKey(Owner,on_delete=models.CASCADE, related_name='houses')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_houses')
     description = models.TextField()
     price = models.FloatField()
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
@@ -52,7 +40,12 @@ class OwnedHouse(models.Model):
     amenities = models.TextField()
     
     def __str__(self):
-        return f"House {self.house_id} by {self.owner_name}"
+        return f"House {self.house_id} by {self.owner.username}"
+
+class Purchase(models.Model):
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='purchases')
+    house = models.ForeignKey(OwnedHouse, on_delete=models.CASCADE, related_name='purchases')
+    purchase_date = models.DateTimeField(auto_now_add=True)
     
 class Images(models.Model):
     images = models.ImageField(upload_to='house_directory_path')
