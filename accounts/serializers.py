@@ -4,9 +4,13 @@ from .models import User, Profile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username', 'email', 'first_name', 'last_name',
+            'date_of_birth', 'age', 'gender', 'phone_number', 'country',
+            'is_customer', 'is_host', 'is_landlord', 'is_tenant', 'is_seller', 'is_buyer'
+        ]
         
-class Profile(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True) 
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ['user', 'bio', 'profile_picture']

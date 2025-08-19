@@ -1,12 +1,12 @@
 {% for house in houses %}
     <div>
         <h2>{{ house.location }}</h2>
-        {% for image in house.images.all %}
+        {% for image in house.image.all %}
             <img src="{{ image.image.url }}" alt="Image of {{ house.location }}">
         {% endfor %}
         <p>Price: ${{ house.price }}</p>
         <p>Description: {{ house.description }}</p>
-        {% if is_authenticated %}
+        {% if request.user.is_authenticated %}
             <button>Book Now</button>
             <button>Add to Wishlist</button>
         {% else %}

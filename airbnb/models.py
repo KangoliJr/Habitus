@@ -63,7 +63,7 @@ class Checkdates(models.Model):
         return f"{self.house.house_id}: {self.checkin.strftime('%Y-%m-%d')} to {self.checkout.strftime('%Y-%m-%d')} ({status})"  
     
 class Images(models.Model):
-    images = models.ImageField(upload_to='house_directory_path')
+    image = models.ImageField(upload_to='house_directory_path')
     house = models.ForeignKey(AirbnbHouse,on_delete=models.CASCADE, related_name='images')
     
     def __str__(self):
