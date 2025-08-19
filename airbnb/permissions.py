@@ -1,16 +1,15 @@
 from rest_framework import permissions
 
-class IsHost(permissions.BasePermission):
-    """
-    Custom permission to only allow hosts to create, update, or delete an object.
-    """
-    def has_permission(self, request, view):
-        if request.user.is_authenticated:
-            return request.user.is_host
-        return False
-
-    def has_object_permission(self, request, view, obj):
+"""
+    Creating a custom permission that only allows  owners of the house to edit it.
+    Read-only access is allowed for anyone 
+"""
+class IsHostOrReadOnly(permissions.BasePermission):
+ 
+    def has_permission(self, request, view, ):
         if request.method in permissions.SAFE_METHODS:
-            return True 
-        
-        return obj.host == request.user
+            return True
+
+        return request.user.is_authenticated and request.user.is_host
+    
+  
