@@ -24,7 +24,7 @@ class AirbnbHouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirbnbHouse
         fields = [
-            'house_id', 'host', 'description', 'price', 'furnishing_style',
+            'host', 'description', 'price', 'furnishing_style',
             'bedroom', 'bathroom', 'location', 'rules', 'amenities',
             'images', 'bookings', 'availability'
         ]

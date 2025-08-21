@@ -17,6 +17,6 @@ class BookingInLine(admin.TabularInline):
     
 @admin.register(AirbnbHouse)
 class AirbnbHouseAdmin(admin.ModelAdmin):
-    list_display = ('host','description', 'price', 'bedroom', 'bathroom', 'location', 'furnishing_style','amenities','rules')
-    search_fields = ('price', 'bedrooms', 'bathroom', 'location', 'is_available')
+    list_display = ('host', 'name', 'location', 'price', 'bedroom', 'bathroom')
+    search_fields = ('price', 'bedroom', 'bathroom', 'location', 'is_available')
     inlines = [ImageInline, CheckdatesInline, BookingInLine]

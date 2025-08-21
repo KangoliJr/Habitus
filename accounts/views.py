@@ -29,7 +29,7 @@ def user_profile_view(request):
         'user': user,
         'profile': profile,
     }
-    return render(request, 'accounts/user_profile_view.html', context)
+    return render(request, 'accounts/profile_view.html', context)
 
 """
 Allowing a registered user to edit  profile details.
@@ -54,6 +54,6 @@ def user_profile_edit(request):
         'user_form': user_form,
         'profile_form': profile_form,
     }
-    return render(request, 'accounts/user_profile_edit.html', context)
+    return render(request, 'accounts/profile_edit.html', context)
     
    

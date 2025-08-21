@@ -8,13 +8,13 @@ class User(AbstractUser):
         ('prefer_not_to_say', 'Prefer not to say'),
     ]
     
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
-    age = models.IntegerField()
-    gender = models.CharField(max_length=20, choices=GENDER_TYPE)
-    phone_number = models.IntegerField()
-    country = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100,blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    age = models.IntegerField(blank=True, null=True)
+    gender = models.CharField(max_length=20, blank=True, null=True, choices=GENDER_TYPE)
+    phone_number = models.IntegerField(blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     
     # Role-Based actions
     is_customer = models.BooleanField(default=True)
