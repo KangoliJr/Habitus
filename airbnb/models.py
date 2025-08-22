@@ -44,8 +44,6 @@ class AirbnbHouse(models.Model):
 class Booking(models.Model):
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='airbnb_bookings')
     house = models.ForeignKey(AirbnbHouse, on_delete=models.CASCADE, related_name='bookings')
-    check_in_date = models.DateField()
-    check_out_date = models.DateField()
     is_confirmed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -55,8 +53,8 @@ class Booking(models.Model):
 
 class Checkdates(models.Model):
     house = models.ForeignKey(AirbnbHouse, on_delete=models.CASCADE, related_name='availability')
-    checkin = models.DateTimeField()
-    checkout = models.DateTimeField()  
+    checkin = models.DateField()
+    checkout = models.DateField()  
     booking = models.ForeignKey(Booking, on_delete=models.SET_NULL, null=True, blank=True, related_name='booked_dates')
     
     def __str__(self):

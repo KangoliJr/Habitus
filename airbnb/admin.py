@@ -13,7 +13,7 @@ class CheckdatesInline(admin.TabularInline):
 class BookingInLine(admin.TabularInline):
     model = Booking
     extra = 1
-    fields = ('customer', 'house', 'check_in_date', 'check_out_date','is_confirmed')
+    fields = ('customer', 'house', 'is_confirmed' )
     
 @admin.register(AirbnbHouse)
 class AirbnbHouseAdmin(admin.ModelAdmin):

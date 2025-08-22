@@ -28,7 +28,8 @@ class OwnedHouse(models.Model):
         ('all_ensuite', 'All Ensuite'),
         ('other', 'Other'),
     ]
-    house_id = models.CharField(max_length=100, primary_key=True)
+    house_id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=200)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_houses')
     description = models.TextField()
     price = models.FloatField()
@@ -47,14 +48,17 @@ class Purchase(models.Model):
     house = models.ForeignKey(OwnedHouse, on_delete=models.CASCADE, related_name='purchases')
     purchase_date = models.DateTimeField(auto_now_add=True)
     
+# dynamic folder
+def house_directory_path(instance, filename):
+    sanitized_name = instance.house.name.replace(" ", "_") 
+    folder_name = f'{instance.house_id}_{sanitized_name}'
+    return os.path.join(f'owned_home/{folder_name}', filename)
+
+
+
 class Images(models.Model):
-    images = models.ImageField(upload_to='house_directory_path')
+    image = models.ImageField(upload_to=house_directory_path)
     house = models.ForeignKey(OwnedHouse,on_delete=models.CASCADE, related_name='images')
     
     def __str__(self):
-        return f"Image for {self.house.house_id}"
-# dynamic folder
-def house_directory_path(instance, filename):
-    sanitized_name = instance.house.house_id.replace(" ", "_") 
-    folder_name = f'house_{sanitized_name}'
-    return os.path.join(f'owned_home/{folder_name}', filename)
+        return f"Image for {self.house.name}"
