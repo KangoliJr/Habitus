@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import Profile,User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login, logout as auth_logout
 from .forms import CustomUserCreationForm,CustomUserChangeForm,ProfileForm
 from .serializers import UserSerializer, ProfileSerializer
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 # Create your views here.
 """
 Creating a loging in section after registering
@@ -90,19 +91,39 @@ def upgrade_role(request):
 
 # DRF Views
 """
+registering
+login
 End points for viewing and listing
 linking a profile to a user
-updating the profile
+updating the profile to only users to edit their own profile
 """ 
-class UserViewset(viewsets.ReadOnlyModelViewset):
+class RegistrationAPIView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+    
+class RegistratioAPIView(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
-    serializer = UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
     
+    def get_object(self):
+        if self.action == 'retrieve' and self.kwargs.get('pk'): #== 'me'
+            return self.request.user
+        return super().get_object()
+class ProfileViewSet(viewsets.ModelViewSet):   
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated] 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
     
-    def perform_create(self,serializer):
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        
+    def perform_update(self,serializer):
         if serializer.instance.user == self.request.user:
             serializer.save()
         else:
