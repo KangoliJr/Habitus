@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 import os
+from django.utils import timezone
 
 class AirbnbHouse(models.Model):
     FURNISHING_STYLES = [

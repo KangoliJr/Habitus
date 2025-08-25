@@ -24,7 +24,7 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
-
+    
 # authentication processes
 @login_required
 def user_profile_view(request):
