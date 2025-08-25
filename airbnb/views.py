@@ -6,7 +6,8 @@ from .forms import AirbnbHouseForm
 from .serializers import AirbnbHouseSerializer
 from .permissions import IsHostOrReadOnly
 from django.contrib import messages
-
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import AirbnbHouseFilter
 
 
 # Create your views here.
@@ -56,6 +57,8 @@ class AirbnbHouseViewSet(viewsets.ModelViewSet):
     serializer_class = AirbnbHouseSerializer
     permission_classes = [IsHostOrReadOnly]
     
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = AirbnbHouseFilter
     def get_queryset(self):
         if self.request.query_params.get('my_listings'):
             return self.queryset.filter(host=self.request.user)
