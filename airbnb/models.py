@@ -79,6 +79,8 @@ def house_directory_path(instance, filename):
     sanitized_name = instance.house.name.replace(" ", "_") 
     folder_name = f'{instance.house_id}_{sanitized_name}'
     return os.path.join(f'airbnb/{folder_name}', filename)
+    # return os.path.join(f'airbnb/house_{instance.house.pk}', filename)
+
 
 class Images(models.Model):
     image = models.ImageField(upload_to=house_directory_path)
