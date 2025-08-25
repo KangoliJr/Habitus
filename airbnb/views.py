@@ -5,6 +5,7 @@ from .models import AirbnbHouse
 from .forms import AirbnbHouseForm
 from .serializers import AirbnbHouseSerializer
 from .permissions import IsHostOrReadOnly
+from django.contrib import messages
 
 
 
@@ -29,6 +30,7 @@ if you are a host
 def add_airbnb_house(request):
 
     if not request.user.is_host:
+        messages.error(request, "Be a host to add a new house unit.")
         return redirect('home')  
     
     if request.method == 'POST':
@@ -43,6 +45,7 @@ def add_airbnb_house(request):
     
     return render(request, 'airbnb/add_house.html', {'form': form})
 
+
 """
     API endpoint for handling all house-related actions.
     - Public can view (list, retrieve).
@@ -53,6 +56,10 @@ class AirbnbHouseViewSet(viewsets.ModelViewSet):
     serializer_class = AirbnbHouseSerializer
     permission_classes = [IsHostOrReadOnly]
     
+    def get_queryset(self):
+        if self.request.query_params.get('my_listings'):
+            return self.queryset.filter(host=self.request.user)
+        return self.queryset.all()
+    
     def perform_create(self, serializer):
-        # Automatically set the host to the authenticated user.
         serializer.save(host=self.request.user)

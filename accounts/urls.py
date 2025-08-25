@@ -3,6 +3,8 @@ from django.contrib.auth import views as auth_views
 from rest_framework.routers import DefaultRouter
 from .import views
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
 
 router = DefaultRouter()
 router.register(r'api/users', views.UserViewSet)
@@ -17,7 +19,7 @@ DRf api urls
 
 urlpatterns = [
     path('register/', views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view),
+    path('login/', LoginView.as_view(template_name='accounts/login.html', success_url=reverse_lazy('homepage')), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     path('dashboard/', views.user_profile_view, name='user_profile_dashboard'),

@@ -19,7 +19,7 @@ def register(request):
 
             Profile.objects.create(user=user)
             auth_login(request, user) 
-            return redirect('accounts:user_profile_dashboard') 
+            return redirect('homepage') 
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})

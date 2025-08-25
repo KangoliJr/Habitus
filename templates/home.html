@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Habitus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .intro-text {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        .cta-buttons a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .register-btn {
+            background-color: #3498db;
+        }
+        .login-btn {
+            background-color: #2ecc71;
+        }
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        .icon {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1em;
+            transition: transform 0.3s, color 0.3s;
+        }
+        .icon:hover {
+            transform: translateY(-5px);
+            color: #3498db;
+        }
+        .icon-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if user.is_authenticated %}
+            <h1>Welcome back to Habitus, {{ user.username }}!</h1>
+            <p class="intro-text">Explore homes available for:</p>
+            <div class="icon-container">
+                <a href="{% url 'airbnb:airbnb_house_list' %}" class="icon">
+                    <img src="https://via.placeholder.com/100" alt="Airbnb" class="icon-img">
+                    <div>Airbnb</div>
+                </a>
+
+                <a href="#" class="icon">
+                    <img src="https://via.placeholder.com/100" alt="Rental" class="icon-img">
+                    <div>Rentals</div>
+                </a>
+
+                <a href="#" class="icon">
+                    <img src="https://via.placeholder.com/100" alt="Owned" class="icon-img">
+                    <div>Owned Homes</div>
+                </a>
+            </div>
+        {% else %}
+            <h1>Welcome to Habitus!</h1>
+            <p class="intro-text">Your one-stop destination for homes.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'accounts:register' %}" class="register-btn">Register</a>
+                <a href="{% url 'accounts:login' %}" class="login-btn">Log In</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

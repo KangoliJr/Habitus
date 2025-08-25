@@ -4,7 +4,7 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'api/houses', views.AirbnbHouseViewSet, basename='airbnb-houses')
-
+app_name = 'airbnb'
 urlpatterns = [
     path('houses/', views.airbnb_house_list_page, name='airbnb_house_list_page'),
     path('houses/add/', views.add_airbnb_house, name='add_airbnb_house'),
