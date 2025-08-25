@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>Welcome, {{ user.username }}!</h1>
+    {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="100">
+    {% endif %}
+    <p>Email: {{ user.email }}</p>
+    <p>Bio: {{ profile.bio }}</p>
+    <p>First Name: {{ user.first_name }}</p>
+    <p>Last Name: {{ user.last_name }}</p>
+    <p>Date of Birth: {{ user.date_of_birth }}</p>
+    <p>Age: {{ user.age }}</p>
+    <p>Gender: {{ user.gender }}</p>
+    <p>Phone Number: {{ user.phone_number }}</p>
+    <p>Country: {{ user.country }}</p>
+
+    <h2>Your Roles:</h2>
+    <ul>
+        {% if user.is_customer %}<li>Customer</li>{% endif %}
+        {% if user.is_host %}<li>Host</li>{% endif %}
+        {% if user.is_landlord %}<li>Landlord</li>{% endif %}
+        {% if user.is_tenant %}<li>Tenant</li>{% endif %}
+        {% if user.is_seller %}<li>Seller</li>{% endif %}
+        {% if user.is_buyer %}<li>Buyer</li>{% endif %}
+    </ul>
+
+    <p><a href="{% url 'accounts:user_profile_edit' %}">Edit Profile</a></p>
+    <p><a href="{% url 'accounts:upgrade_role' %}">Upgrade Role</a></p>
+    <p><a href="{% url 'accounts:logout' %}">Logout</a></p>
+</body>
+</html>

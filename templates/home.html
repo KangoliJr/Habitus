@@ -66,10 +66,11 @@
 <body>
     <div class="container">
         {% if user.is_authenticated %}
-            <h1>Welcome back to Habitus, {{ user.username }}!</h1>
+            <h1>Welcome to Habitus, {{ user.username }}!</h1>
             <p class="intro-text">Explore homes available for:</p>
+            <p>Go to your <a href="{% url 'accounts:user_profile_view' %}">Profile Dashboard</a>.</p>
             <div class="icon-container">
-                <a href="{% url 'airbnb:airbnb_house_list' %}" class="icon">
+                <a href="#" class="icon">
                     <img src="https://via.placeholder.com/100" alt="Airbnb" class="icon-img">
                     <div>Airbnb</div>
                 </a>
@@ -83,6 +84,11 @@
                     <img src="https://via.placeholder.com/100" alt="Owned" class="icon-img">
                     <div>Owned Homes</div>
                 </a>
+
+                <form action="{% url 'accounts:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Log Out</button>
+                </form>
             </div>
         {% else %}
             <h1>Welcome to Habitus!</h1>

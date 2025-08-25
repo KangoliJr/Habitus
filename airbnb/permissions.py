@@ -6,10 +6,13 @@ from rest_framework import permissions
 """
 class IsHostOrReadOnly(permissions.BasePermission):
  
-    def has_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-
-        return obj.host == request.user
+        return request.user.is_authenticated and request.user.is_host
     
-  
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.host == request.user

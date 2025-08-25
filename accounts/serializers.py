@@ -5,7 +5,7 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True) 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name',
+        fields = ['username', 'email', 'first_name', 'last_name', 'password',
             'date_of_birth', 'age', 'gender', 'phone_number', 'country',
             'is_customer', 'is_host', 'is_landlord', 'is_tenant', 'is_seller', 'is_buyer'
         ]

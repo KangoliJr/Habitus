@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile,User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth import login as auth_login
 from .forms import CustomUserCreationForm,CustomUserChangeForm,ProfileForm
 from .serializers import UserSerializer, ProfileSerializer
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
 # Create your views here.
 """
 Creating a loging in section after registering
@@ -33,7 +34,8 @@ def user_profile_view(request):
         'user': user,
         'profile': profile,
     }
-    return render(request, 'accounts/profile_view.html', context)
+    return redirect('homepage')
+    # return render(request, 'accounts/profile_view.html', context)
 
 """
 Allowing a registered user to edit  profile details.
@@ -85,8 +87,6 @@ def upgrade_role(request):
             context['message'] = "You are now a new Buyer"
         else:
             context['error'] = "You can not upgrade a role"
-        return render(request, 'accounts/role_upgrade.html', context)
-    
     return render(request, 'accounts/role_upgrade.html', context)
 
 # DRF Views
@@ -101,22 +101,30 @@ class RegistrationAPIView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     
-class RegistratioAPIView(generics.CreateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        Profile.objects.create(user=user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
     
-    def get_object(self):
-        if self.action == 'retrieve' and self.kwargs.get('pk'): #== 'me'
-            return self.request.user
-        return super().get_object()
+    def get_queryset(self):
+        return self.queryset.filter(pk=self.request.user.pk)
+
+    
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 class ProfileViewSet(viewsets.ModelViewSet):   
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated] 
+    permission_classes = [IsAuthenticated] 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
     
@@ -124,15 +132,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
         
     def perform_update(self,serializer):
-        if serializer.instance.user == self.request.user:
-            serializer.save()
-        else:
-            self.permission_denied(self.request, message = "You allowed to only edit your profile" )
+        serializer.save()
             
 # role upgrades
 class RoleUpgradeAPIView(generics.UpdateAPIView):
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get_object(self):
         return self.request.user
@@ -141,18 +146,16 @@ class RoleUpgradeAPIView(generics.UpdateAPIView):
         user = self.get_object()
         role_choice_upgrade = request.data.get('role','')
         
-        if role_choice_upgrade == 'host' and not user.is_host:
+        if role_choice_upgrade == 'host':
             user.is_host = True
-            user.save()
-            return Response({'message':'Successfully upgraded to a Host.', 'is_host': True})
-        elif role_choice_upgrade == 'landlord' and not user.is_landlord:
-            user.is_host = True
-            user.save()
-            return Response({'message':'Successfully upgraded to a  Landlord.', 'is_landlord': True})
-        elif role_choice_upgrade == 'seller' and not user.is_seller:
-            user.is_host = True
-            user.save()
-            return Response({'message':'Successfully upgraded to a  Seller.', 'is_seller': True})
+        elif role_choice_upgrade == 'landlord':
+            user.is_landlord = True
+        elif role_choice_upgrade == 'seller':
+            user.is_seller = True
         else:
             return Response({'message': 'Invalid upgrade request.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         

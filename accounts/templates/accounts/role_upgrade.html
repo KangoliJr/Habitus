@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Role</title>
+</head>
+<body>
+    <h1>Upgrade Your Role</h1>
+
+    {% if message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {% if not user.is_host %}
+            <button type="submit" name="become_host">Become a Host</button>
+        {% else %}
+            <p>You are already a Host.</p>
+        {% endif %}
+
+        {% if not user.is_landlord %}
+            <button type="submit" name="become_landlord">Become a Landlord</button>
+        {% else %}
+            <p>You are already a Landlord.</p>
+        {% endif %}
+
+        {% if not user.is_seller %}
+            <button type="submit" name="become_seller">Become a Seller</button>
+        {% else %}
+            <p>You are already a Seller.</p>
+        {% endif %}
+    </form>
+    <p><a href="{% url 'accounts:user_profile_view' %}">Back to Profile</a></p>
+</body>
+</html>
