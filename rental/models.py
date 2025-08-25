@@ -27,10 +27,11 @@ class RentalHouse(models.Model):
         ('all_ensuite', 'All Ensuite'),
         ('other', 'Other'),
     ]
-    house_id = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=200)
     landlord = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_houses')
     description = models.TextField()
-    price = models.FloatField()
+    monthly_rent = models.DecimalField(max_digits=10, decimal_places=2)
+    security_deposit = models.FloatField(default=0)
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
     bedroom = models.CharField(max_length=20, choices=BEDROOM_TYPES)
     bathroom = models.CharField(max_length=20, choices=BATHROOM_TYPES)
@@ -42,28 +43,36 @@ class RentalHouse(models.Model):
         return f"House {self.house_id} by {self.landlord.username}"
     
 
-class Booking(models.Model):
-    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_bookings')
-    house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='bookings')
-    check_in_date = models.DateField()
+class RentalApplication(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+        ('Leased', 'Leased'),
+    ]
+    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_application')
+    house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='application')
+    move_in_date = models.DateField()
+    lease_duration_months = models.IntegerField(help_text="Duration of the lease in months.")
     check_out_date = models.DateField()
-    is_confirmed = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"Booking for {self.house.house_id} by {self.tenant.username}"
     
+class LeaseAgreement(models.Model):
+    application = models.OneToOneField(RentalApplication, on_delete=models.CASCADE, related_name='lease_agreement')
+    landlord_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='landlord_leases')
+    tenant_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tenant_leases')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    is_signed_by_tenant = models.BooleanField(default=False)
+    is_signed_by_landlord = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-class Checkdates(models.Model):
-    house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='availability')
-    checkin = models.DateTimeField()
-    checkout = models.DateTimeField()  
-    booking = models.ForeignKey(Booking, on_delete=models.SET_NULL, null=True, blank=True, related_name='booked_dates')
-    
     def __str__(self):
-        status = 'Booked' if self.booking else 'Available'
-        return f"{self.house.house_id}: {self.checkin.strftime('%Y-%m-%d')} to {self.checkout.strftime('%Y-%m-%d')} ({status})"  
-    
+        return f"Lease for {self.application.house.house_id}"
 class Images(models.Model):
     images = models.ImageField(upload_to='house_directory_path')
     house = models.ForeignKey(RentalHouse,on_delete=models.CASCADE, related_name='images')
