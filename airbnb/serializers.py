@@ -25,6 +25,6 @@ class AirbnbHouseSerializer(serializers.ModelSerializer):
         fields = [
             'name','host', 'description', 'price', 'furnishing_style',
             'bedroom', 'bathroom', 'location', 'rules', 'amenities',
-            'images', 'bookings', 'availability'
+            'images', 'bookings'
         ]
         read_only_fields = ['host']
