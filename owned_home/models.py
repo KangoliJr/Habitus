@@ -28,7 +28,6 @@ class OwnedHouse(models.Model):
         ('all_ensuite', 'All Ensuite'),
         ('other', 'Other'),
     ]
-    house_id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_houses')
     description = models.TextField()
@@ -41,7 +40,7 @@ class OwnedHouse(models.Model):
     amenities = models.TextField()
     
     def __str__(self):
-        return f"House {self.house_id} by {self.owner.username}"
+        return f"House {self.name} by {self.owner.username}"
 
 class Purchase(models.Model):
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='purchases')

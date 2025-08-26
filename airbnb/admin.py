@@ -5,12 +5,12 @@ class ImageInline(admin.TabularInline):
     model = Images
     extra = 1 
     
-    
-# class BookingInLine(admin.TabularInline):
-#     model = Booking
-#     extra = 1
-#     fields = ('customer', 'house','checkin', 'checkout', 'status', 'created_at',)
-#     readonly_fields = ('customer', 'created_at',)
+# @admin.register(Booking)
+class BookingInLine(admin.TabularInline):
+    model = Booking
+    extra = 1
+    fields = ('customer', 'house','checkin', 'checkout', 'status', 'created_at',)
+    readonly_fields = ('customer', 'created_at',)
     
 @admin.register(AirbnbHouse)
 class AirbnbHouseAdmin(admin.ModelAdmin):
@@ -19,4 +19,4 @@ class AirbnbHouseAdmin(admin.ModelAdmin):
     search_fields = ('price', 'bedroom', 'bathroom', 'location', 'is_available')
     inlines = [ImageInline,]
     
-admin.site.register(Booking)
+# admin.site.register(Booking)

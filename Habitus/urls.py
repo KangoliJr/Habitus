@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('airbnb/',include('airbnb.urls')),
     path('accounts/',include('accounts.urls')),
+    path('rental/',include('rental.urls')),
     
     path('', views.homepage, name='homepage'),
     
