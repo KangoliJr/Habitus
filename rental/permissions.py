@@ -11,4 +11,4 @@ class IsLandlordOrReadOnly(permissions.BasePermission):
         # Read permissions are allowed to any request.
         if request.method in permissions.SAFE_METHODS:
             return True
-        return obj.lanlord == request.landlord
+        return obj.landlord == request.landlord

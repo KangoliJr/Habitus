@@ -10,4 +10,4 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         # Read permissions are allowed to any request.
         if request.method in permissions.SAFE_METHODS:
             return True
-        return obj.lanlord == request.owner
+        return obj.owner == request.user
