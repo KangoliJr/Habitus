@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from .models import AirbnbHouse, Booking
 from .forms import AirbnbHouseForm
 from .serializers import AirbnbHouseSerializer, BookingSerializer

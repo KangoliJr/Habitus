@@ -38,6 +38,7 @@ class OwnedHouse(models.Model):
     location = models.CharField(max_length=30)
     rules = models.TextField()
     amenities = models.TextField()
+    is_for_sale = models.BooleanField(default=True)
     
     def __str__(self):
         return f"House {self.name} by {self.owner.username}"

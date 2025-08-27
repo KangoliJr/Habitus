@@ -5,7 +5,7 @@ from .forms import OwnedHouseForm, HousePurchaseForm
 # Create your views here.
 #  T-views
 def owned_house_list(request):
-    houses = OwnedHouse.objects.filter(is_available=True)
+    houses = OwnedHouse.objects.filter(is_for_sale=True)
     return render(request, 'owned_home/owned_house_list.html', {'houses': houses})
 
 def owned_house_detail(request):
