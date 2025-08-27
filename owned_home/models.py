@@ -42,9 +42,15 @@ class OwnedHouse(models.Model):
     def __str__(self):
         return f"House {self.name} by {self.owner.username}"
 
-class Purchase(models.Model):
+class HousePurchase(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='purchases')
-    house = models.ForeignKey(OwnedHouse, on_delete=models.CASCADE, related_name='purchases')
+    house = models.OneToOneField(OwnedHouse, on_delete=models.CASCADE, related_name='purchases')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     purchase_date = models.DateTimeField(auto_now_add=True)
     
 # dynamic folder
@@ -52,8 +58,6 @@ def house_directory_path(instance, filename):
     sanitized_name = instance.house.name.replace(" ", "_") 
     folder_name = f'{instance.house_id}_{sanitized_name}'
     return os.path.join(f'owned_home/{folder_name}', filename)
-
-
 
 class Images(models.Model):
     image = models.ImageField(upload_to=house_directory_path)

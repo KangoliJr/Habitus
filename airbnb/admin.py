@@ -5,7 +5,6 @@ class ImageInline(admin.TabularInline):
     model = Images
     extra = 1 
     
-# @admin.register(Booking)
 class BookingInLine(admin.TabularInline):
     model = Booking
     extra = 1
@@ -19,4 +18,3 @@ class AirbnbHouseAdmin(admin.ModelAdmin):
     search_fields = ('price', 'bedroom', 'bathroom', 'location', 'is_available')
     inlines = [ImageInline,]
     
-# admin.site.register(Booking)
