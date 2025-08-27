@@ -11,7 +11,7 @@ app_name = 'rental'
 urlpatterns = [
     # T-urls
     path('', views.rental_property_list, name='rental_properties_list'),
-    path('house/', views.rental_property_detail, name='rental_property_detail'),
+    path('<int:house_id>/', views.rental_property_detail, name='rental_property_detail'),
     path('my-applications/', views.my_applications, name='my_applications'),
     
     # API urls

@@ -14,8 +14,8 @@ def rental_property_list(request):
     houses  = RentalHouse.objects.filter(is_available=True)
     return render(request, 'rental/rental_properties_list.html', {'houses': houses})
 
-def rental_property_detail(request):
-    house = get_object_or_404(RentalHouse)
+def rental_property_detail(request, house_id):
+    house = get_object_or_404(RentalHouse, id=house_id)
     return render(request, 'rental/rental_property_detail.html', {'house': house})
 
 @login_required

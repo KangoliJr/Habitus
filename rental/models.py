@@ -38,6 +38,7 @@ class RentalHouse(models.Model):
     location = models.CharField(max_length=30)
     rules = models.TextField()
     amenities = models.TextField()
+    is_available = models.BooleanField(default=True)
     
     def __str__(self):
         return f"House {self.name} by {self.landlord.username}"
@@ -57,6 +58,7 @@ class RentalApplication(models.Model):
     check_out_date = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
+   
     
     def __str__(self):
         return f"Booking for {self.house.name} by {self.tenant.username}"

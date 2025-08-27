@@ -1,15 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'rental/base.html' %}
 
 {% block content %}
-<h2>Houses for Sale</h2>
+<h2>Available Rental Properties</h2>
+
 {% if houses %}
     <ul>
     {% for house in houses %}
         <div class="slider-container">
             <div class="slider">
-                {% for image in house.image.all %}
+                {% for image in house.images.all %}
                 <div class="slide">
-                    <img src="{{ image.image.url }}" alt="{{ house.name }}">
+                    <img src="{{ image.images.url }}" alt="{{ house.name }}">
                 </div>
                 {% endfor %}
                 <button class="prev">&#10094;</button>
@@ -17,16 +18,15 @@
             </div>
         </div>
         <li>
-            <a href="{% url 'owned_home:owned_house_detail' house.id %}">
-                <h3>{{ house.name }}</h3>
-                <p>Location: {{ house.location }}</p>
-            </a>
-            <p>Price: ${{ house.price }}</p>
+            <a href="{% url 'rental:rental_property_detail' house.id %}">More</a>
+            <h3>{{ house.location }}</h3>
+            <p>Price: ${{ house.monthly_rent }} / month</p>
         </li>
+        
     {% endfor %}
     </ul>
 {% else %}
-    <p>No houses are currently listed for sale.</p>
+    <p>No rental properties are currently available.</p>
 {% endif %}
 
 {% endblock %}
