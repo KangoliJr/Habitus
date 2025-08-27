@@ -45,4 +45,23 @@ def delete_owned_house(request):
         return redirect('owned_home:owned_house_list')
     return render(request, 'owned_home/delete_confirm.html', {'owned_house': owned_house})
 
+@login_required
+def submit_purchase(request, house_id):
+    house = get_object_or_404(OwnedHouse, id=house_id)
+    if request.method == 'POST':
+        form = HousePurchaseForm(request.POST)
+        if form.is_valid():
+            purchase = form.save(commit=False)
+            purchase.house = house
+            purchase.buyer = request.user
+            purchase.purchase_price = house.price
+            purchase.save()
+            return redirect('owned_home:owned_house_list')
+        else:
+           form = HousePurchaseForm()
+        return render(request, 'owned_home/submit_purchase.html', {'form': form, 'house': house})
+            
+            
+            
+
 # API Views
