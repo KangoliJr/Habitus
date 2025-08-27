@@ -12,8 +12,8 @@ def owned_house_list(request):
     houses = OwnedHouse.objects.filter(is_for_sale=True)
     return render(request, 'owned_home/owned_house_list.html', {'houses': houses})
 
-def owned_house_detail(request):
-    house = get_object_or_404(OwnedHouse)
+def owned_house_detail(request, house_id):
+    house = get_object_or_404(OwnedHouse,  id=house_id)
     return render(request, 'owned_home/owned_house_detail.html', {'house': house})
 
 @login_required
@@ -74,7 +74,7 @@ class OwnedHouseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
         
-class HousePurchaseViewset(viewsets.ModelViewSet):
+class HousePurchaseViewSet(viewsets.ModelViewSet):
     queryset = HousePurchase.objects.all()
     serializer_class = HousePurchaseSerializier
     permission_classes = [IsAuthenticated]
