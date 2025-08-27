@@ -11,13 +11,20 @@ class RentalHouseSerializer(serializers.ModelSerializer):
     images = ImagesSerializer(many=True, read_only=True)
     class Meta:
         model = RentalHouse
-        fields = ['__all__']
+        fields = [
+            'id', 'landlord', 'description', 'monthly_rent', 
+            'security_deposit', 'furnishing_style', 'bedroom', 
+            'bathroom', 'location', 'rules', 'amenities','images'
+        ]
 class RentalApplicationSerializer(serializers.ModelSerializer):      
-    house_id = serializers.CharField(source='house.id')
+    house_id = serializers.IntegerField(source='house.id')
     tenant_name = serializers.CharField(source='tenant.username', read_only=True)
     class Meta:
         model = RentalApplication
-        fields = ['__all__']
+        fields = ['id', 'landlord', 'description', 'monthly_rent', 
+            'security_deposit', 'furnishing_style', 'bedroom', 
+            'bathroom', 'location', 'rules', 'amenities','images',
+        ]
 
 class LeaseAgreementSerializer(serializers.ModelSerializer):
     application_id = serializers.CharField(source='application.id')

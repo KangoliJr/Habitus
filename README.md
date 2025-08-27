@@ -23,3 +23,9 @@ GET/accounts/api/token/
 POST/accounts/api/token/refresh/
 GET/accounts/api/register/
 POST accounts/api/register/
+
+Rental
+GET /rental/api/(API root)
+GET /rental/api/houses/
+GET /rental/api/applications/
+GET /rental/api/agreements/

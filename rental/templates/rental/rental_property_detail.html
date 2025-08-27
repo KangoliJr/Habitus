@@ -1,0 +1,33 @@
+{% extends 'rental/base.html' %}
+
+{% block content %}
+<div class="house-details container">
+    <div class="slider">
+        {% for image in house.images.all %}
+        <img src="{{ image.images.url }}" alt="{{ house.name }}">
+        {% endfor %}
+    </div>
+        <p>Name: {{ house.name }}</p>
+        <p>Landlord: {{ house.landlord.username }}</p>
+        <p>Price: ${{ house.monthly_rent }} / month</p>
+        <p>{{ house.location }}</p>
+        <p>Description: {{ house.description }}</p>
+        <p>Bedrooms: {{ house.bedroom }} <br>Bathrooms: {{ house.bathroom }}</br></p>
+        <p>Furnishing: {{ house.furnishing_style }}</p>
+        <p>Amenities: {{ house.amenities }}</p>
+        <p>Rules: {{ house.rules }}</p>
+
+        {% if request.user.is_authenticated and not request.user.is_landlord %}
+            <button>Add to Wishlist</button>
+            {% if house.is_available %}
+                <a href="{% url 'rental:submit_rental_application' house.id %}">
+                    <button>Apply for this property</button>
+                </a>
+            {% else %}
+                <p>This property is not currently available.</p>
+            {% endif %}
+        {% endif %}
+
+    </div>
+{% endblock %}
+

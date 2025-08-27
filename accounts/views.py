@@ -34,8 +34,8 @@ def user_profile_view(request):
         'user': user,
         'profile': profile,
     }
-    return redirect('homepage')
-    # return render(request, 'accounts/profile_view.html', context)
+    # return redirect('homepage')
+    return render(request, 'accounts/profile_view.html', context)
 
 """
 Allowing a registered user to edit  profile details.

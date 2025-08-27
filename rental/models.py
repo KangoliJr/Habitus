@@ -40,7 +40,7 @@ class RentalHouse(models.Model):
     amenities = models.TextField()
     
     def __str__(self):
-        return f"House {self.house_id} by {self.landlord.username}"
+        return f"House {self.name} by {self.landlord.username}"
     
 
 class RentalApplication(models.Model):
@@ -59,7 +59,7 @@ class RentalApplication(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Booking for {self.house.house_id} by {self.tenant.username}"
+        return f"Booking for {self.house.name} by {self.tenant.username}"
     
 class LeaseAgreement(models.Model):
     application = models.OneToOneField(RentalApplication, on_delete=models.CASCADE, related_name='lease_agreement')
@@ -70,17 +70,18 @@ class LeaseAgreement(models.Model):
     is_signed_by_tenant = models.BooleanField(default=False)
     is_signed_by_landlord = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
-        return f"Lease for {self.application.house.house_id}"
+        return f"Lease for {self.application.house.name}"
+# dynamic folder
+def house_directory_path(instance, filename):
+    sanitized_name = instance.house.name.replace(" ", "_") 
+    folder_name = f'{instance.house_id}_{sanitized_name}'
+    return os.path.join(f'rental/{folder_name}', filename)
+    # return os.path.join(f'airbnb/house_{instance.house.pk}', filename)
 class Images(models.Model):
-    images = models.ImageField(upload_to='house_directory_path')
+    images = models.ImageField(upload_to=house_directory_path)
     house = models.ForeignKey(RentalHouse,on_delete=models.CASCADE, related_name='images')
     
     def __str__(self):
-        return f"Image for {self.house.house_id}"
-# dynamic folder
-def house_directory_path(instance, filename):
-    sanitized_name = instance.house.house_id.replace(" ", "_") 
-    folder_name = f'house_{sanitized_name}'
-    return os.path.join(f'rental/{folder_name}', filename)
+        return f"Image for {self.house.name}"
+
