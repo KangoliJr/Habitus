@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import OwnedHouse, HousePurchase
 from django.contrib.auth.decorators import login_required
 from .forms import OwnedHouseForm, HousePurchaseForm
+from rest_framework import viewsets
+from .serializers import OwnedHouseSerializer, HousePurchaseSerializier
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 #  T-views
 def owned_house_list(request):
@@ -61,7 +65,24 @@ def submit_purchase(request, house_id):
            form = HousePurchaseForm()
         return render(request, 'owned_home/submit_purchase.html', {'form': form, 'house': house})
             
-            
-            
-
 # API Views
+class OwnedHouseViewSet(viewsets.ModelViewSet):
+    queryset = OwnedHouse.objects.all()
+    serializer_class = OwnedHouseSerializer
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+        
+class HousePurchaseViewset(viewsets.ModelViewSet):
+    queryset = HousePurchase.objects.all()
+    serializer_class = HousePurchaseSerializier
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return HousePurchase.objects.filter(buyer=self.request.user)
+        return HousePurchase.objects.name()
+    
+    def perform_create(self, serializer):
+        serializer.save(buyer=self.request.user)
