@@ -1,0 +1,12 @@
+{% extends 'rental/base.html' %}
+
+{% block content %}
+<h2>Submit Application for {{ house.location }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Application</button>
+</form>
+
+{% endblock %}

@@ -16,13 +16,16 @@ from rest_framework.permissions import IsAuthenticated
 """
 Here we are going to show the html page for showing the houses
 """
-def airbnb_house_list_page(request):
+def airbnb_house_list(request):
     houses = AirbnbHouse.objects.all()
     context = {
         'houses': houses,
         'is_authenticated': request.user.is_authenticated,
     }
-    return render(request, 'airbnb/house_list.html', context)
+    return render(request, 'airbnb/airbnb_house_list.html', context)
+def airbnb_house_detail(request, house_id):
+    house = get_object_or_404(AirbnbHouse, id=house_id)
+    return render(request, 'airbnb/airbnb_house_detail.html', {'house': house})
 
 """
 Handles a form for adding a new house. 

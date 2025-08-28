@@ -1,10 +1,10 @@
-{% extends 'rental/base.html' %}
+{% extends 'airbnb/base.html' %}
 
 {% block content %}
 <div class="house-details container">
     <div class="slider">
         {% for image in house.images.all %}
-        <img src="{{ image.images.url }}" alt="{{ house.name }}">
+        <img src="{{ image.image.url }}" alt="{{ house.name }}">
         {% endfor %}
     </div>
         <p>Name: {{ house.name }}</p>
@@ -17,17 +17,5 @@
         <p>Amenities: {{ house.amenities }}</p>
         <p>Rules: {{ house.rules }}</p>
 
-        {% if request.user.is_authenticated and not request.user.is_landlord %}
-            <button>Add to Wishlist</button>
-            {% if house.is_available %}
-                <a href="{% url 'rental:submit_application' house.id %}">
-                    <button>Apply for this property</button>
-                </a>
-            {% else %}
-                <p>This property is not currently available.</p>
-            {% endif %}
-        {% endif %}
-
     </div>
 {% endblock %}
-

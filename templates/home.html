@@ -15,7 +15,7 @@
             <p class="intro-text">Explore homes available for:</p>
             <p>Go to your <a href="{% url 'accounts:user_profile_view' %}">Profile Dashboard</a>.</p>
             <div class="icon-container">
-                <a href="#" class="icon">
+                <a href="{% url 'airbnb:airbnb_house_list' %}" class="icon">
                     <img src="https://via.placeholder.com/100" alt="Airbnb" class="icon-img">
                     <div>Airbnb</div>
                 </a>
@@ -25,7 +25,7 @@
                     <div>Rentals</div>
                 </a>
 
-                <a href="#" class="icon">
+                <a href="{% url 'owned_home:owned_house_list' %}" class="icon">
                     <img src="https://via.placeholder.com/100" alt="Owned" class="icon-img">
                     <div>Owned Homes</div>
                 </a>

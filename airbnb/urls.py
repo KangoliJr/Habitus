@@ -7,7 +7,8 @@ router = DefaultRouter()
 router.register(r'houses', views.AirbnbHouseViewSet, basename='airbnb-houses')
 app_name = 'airbnb'
 urlpatterns = [
-    path('houses/', views.airbnb_house_list_page, name='airbnb_house_list_page'),
+    path('', views.airbnb_house_list, name='airbnb_house_list'),
+    path('<int:house_id>/', views.airbnb_house_detail, name='airbnb_house_detail'),
     path('houses/add/', views.add_airbnb_house, name='add_airbnb_house'),
     # crud
     path('houses/<int:pk>/edit/', views.edit_airbnb_house, name='edit_airbnb_house'),

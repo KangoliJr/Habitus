@@ -8,7 +8,7 @@
         <p>Name: {{ house.name }}</p>
         <p>Price: ${{ house.price }}</p>
         <p>{{ house.location }}</p>
-        <p>Description: {{ house.description }}</p>
+        <a href="{% url 'airbnb:airbnb_house_detail' house.id %}">More</a>
         {% if request.user.is_authenticated %}
             <button>Book Now</button>
             <button>Add to Wishlist</button>

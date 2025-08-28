@@ -1,6 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render,redirect, get_object_or_404
 from . models import RentalHouse, RentalApplication, LeaseAgreement
 from django.contrib.auth.decorators import login_required
+from .forms import RentalApplicationForm
+from django.contrib import messages
 from rest_framework import viewsets
 from .serializers import RentalHouseSerializer, RentalApplicationSerializer, LeaseAgreementSerializer
 from .permissions import IsLandlordOrReadOnly
@@ -22,7 +24,22 @@ def rental_property_detail(request, house_id):
 def my_applications(request):
     applications = RentalApplication.objects.filter(tenant=request.user)
     return render(request, 'rental/my_applications.html', {'applications': applications})
-
+@login_required
+def submit_application(request, house_id):
+    house = get_object_or_404(RentalHouse, id=house_id)
+    if request.method == 'POST':
+        form = RentalApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.tenant = request.user
+            application.house = house
+            application.save()
+            messages.success(request, "Your application has been submitted.")
+            return redirect('rental:my_applications')
+    else:
+        form = RentalApplicationForm()
+    
+    return render(request, 'rental/submit_application.html', {'form': form, 'house': house})
 # API Views
 class RentalHouseViewSet(viewsets.ModelViewSet):
     queryset = RentalHouse.objects.all()

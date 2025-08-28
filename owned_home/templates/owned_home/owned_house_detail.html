@@ -1,0 +1,22 @@
+{% extends 'owned_home/base.html' %}
+
+{% block content %}
+<h2>{{ house.name }}</h2>
+<p>Owner: {{ house.owner.username }}</p>
+<p>Price: ${{ house.price }}</p>
+<p>Description: {{ house.description }}</p>
+<p>Bedrooms: {{ house.bedroom }} | Bathrooms: {{ house.bathroom }}</p>
+<p>Furnishing: {{ house.furnishing_style }}</p>
+<p>Amenities: {{ house.amenities }}</p>
+<p>Rules: {{ house.rules }}</p>
+
+{% if request.user == house.owner %}
+    <a href="{% url 'owned_home:edit_owned_house' house.id %}">
+        <button>Edit Listing</button>
+    </a>
+    <a href="{% url 'owned_home:delete_owned_house' house.id %}">
+        <button>Delete Listing</button>
+    </a>
+{% endif %}
+
+{% endblock %}
