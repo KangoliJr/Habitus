@@ -67,3 +67,60 @@ class OwnedHomeTraditionalViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owned_home/owned_house_detail.html')
         self.assertContains(response, self.house.name)
+        
+    def test_add_owned_house_view_auth(self):
+        self.client.login(username='testowner', password='password123')
+        response = self.client.get(self.add_url)
+        self.assertEqual(response.status_code,200)
+        
+        post_data = {
+            'name': 'New House',
+            'description': 'A new will be sold',
+            'price': 300000,
+            'location': 'Mombasa',
+            'furnishing_style': 'Fully_Furnished',
+            'bedroom': '3_bedroom',
+            'bathroom': '2_bathroom',
+            'rules': 'No smoking',
+            'amenities': 'Pool'
+        }
+        response = self.client.post(self.add_url, post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.list_url)
+        self.assertEqual(OwnedHouse.objects.count(), 2)
+        
+    def test_edit_owned_house_view_auth(self):
+        self.client.login(username='testowner', password='password123')
+        post_data={
+            'name': 'Updated House',
+            'description': 'Updated description',
+            'price': 260000,
+            'location': 'Nairobi',
+            'furnishing_style': 'unfurnished',
+            'bedroom': '2_bedroom',
+            'bathroom': '1_bathroom',
+            'rules': 'No pets',
+            'amenities': 'Parking, Balcony'
+        }
+        response = self.client.post(self.edit_url, post_data)
+        self.assertEqual(response.status_code, 302)
+        self.house.refresh_from_db()
+        self.assertEqual(self.house.name, 'Updated House')
+
+    def test_edit_owned_house_view_permissions(self):
+        self.client.login(username='otheruser', password='password123')
+        response = self.client.get(self.edit_url)
+        self.assertEqual(response.status_code, 404) 
+
+    def test_delete_owned_house_view_auth(self):
+        self.client.login(username='testowner', password='password123')
+        response = self.client.post(self.delete_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.list_url)
+        self.assertEqual(OwnedHouse.objects.count(), 0)
+
+    def test_delete_owned_house_view_permissions(self):
+        self.client.login(username='otheruser', password='password123')
+        response = self.client.post(self.delete_url)
+        self.assertEqual(response.status_code, 404)
+        

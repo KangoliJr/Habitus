@@ -5,7 +5,7 @@ class OwnedHouseForm(forms.ModelForm):
     class Meta:
         model = OwnedHouse
         fields = [
-            'name', 'owner', 'description', 'price', 
+            'name', 'description', 'price', 
             'furnishing_style', 'bedroom', 'bathroom', 
             'location', 'rules', 'amenities'
         ]

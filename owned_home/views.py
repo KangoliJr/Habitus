@@ -25,9 +25,9 @@ def add_owned_house(request):
             owned_house.owner = request.user
             owned_house.save()
             return redirect('owned_home:owned_house_list')
-        else:
-            form = OwnedHouseForm()
-        return render(request,'owned_home/add_owned_house.html', {'form': form})
+    else:
+        form = OwnedHouseForm()
+    return render(request,'owned_home/add_owned_house.html', {'form': form})
     
 @login_required
 def edit_owned_house(request, house_id):
@@ -37,6 +37,8 @@ def edit_owned_house(request, house_id):
         if form.is_valid():
             form.save()
             return redirect('owned_home:owned_house_detail', house_id=house_id)
+        else:
+            print(form.errors)
     else:
         form = OwnedHouseForm(instance=owned_house)
     return render(request, 'owned_home/edit_owned_house.html', {'form': form, 'owned_house': owned_house})
@@ -61,9 +63,9 @@ def submit_purchase(request, house_id):
             purchase.purchase_price = house.price
             purchase.save()
             return redirect('owned_home:owned_house_list')
-        else:
-           form = HousePurchaseForm()
-        return render(request, 'owned_home/submit_purchase.html', {'form': form, 'house': house})
+    else:
+        form = HousePurchaseForm()
+    return render(request, 'owned_home/submit_purchase.html', {'form': form, 'house': house})
             
 # API Views
 class OwnedHouseViewSet(viewsets.ModelViewSet):
