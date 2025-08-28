@@ -5,15 +5,14 @@ it consists of 4 crucial apps to ensure a proper flexibility. The first app is t
 API End points
 
 AIrbnb
-GET/airbnb/api/(API root)
-GET/airbnb/api/houses/
-POST/airbnb/api/houses/
+airbnb/api/(API root)
+(GET/POST)airbnb/api/houses/
 GET/airbnb/api/houses/<id>/
 (PATCH/PUT)/airbnb/api/houses/<id>/
 DELETE/airbnb/api/houses/<id>/
 
 Accounts
-GET/accounts/api/(API root)
+accounts/api/(API root)
 GET/accounts/api/users/
 GET/accounts/api/users/me
 GET/accounts/api/profiles/
@@ -29,3 +28,8 @@ GET /rental/api/(API root)
 GET /rental/api/houses/
 GET /rental/api/applications/
 GET /rental/api/agreements/
+
+Owned_home
+(POST/GET)owned-home/api/houses/
+(GET/PUT/DELETE)owned-home/api/houses/{id}/
+(GET/POST)owned-home/api/purchases/

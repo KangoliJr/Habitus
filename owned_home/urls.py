@@ -4,7 +4,8 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'houses', views.OwnedHouseViewSet, basename='owned-house'),
-router.register(r'purchases', views.HousePurchaseViewSet, basename='house-purchase'),
+# router.register(r'purchases', views.HousePurchaseViewSet, basename='house-purchase'),
+router.register(r'images', views.ImageViewSet, basename='image')
 
 app_name = 'owned_home'
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path('<int:house_id>/edit/', views.edit_owned_house, name='edit_owned_house'),
     path('<int:house_id>/purchase/', views.submit_purchase, name='submit_purchase'),
     path('<int:house_id>/delete/', views.delete_owned_house, name='delete_owned_house'),
-     
+    
     path('api/', include(router.urls)),
+    path('api/purchases/', views.HousePurchaseListCreate.as_view(), name='house-purchase-list-create'),
+    path('api/purchases/<int:pk>/', views.HousePurchaseRetrieve.as_view(), name='house-purchase-retrieve'),
 ]

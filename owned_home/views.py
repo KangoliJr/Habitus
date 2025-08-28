@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import OwnedHouse, HousePurchase
+from .models import OwnedHouse, HousePurchase, Images
 from django.contrib.auth.decorators import login_required
 from .forms import OwnedHouseForm, HousePurchaseForm
-from rest_framework import viewsets
-from .serializers import OwnedHouseSerializer, HousePurchaseSerializier
+from rest_framework import viewsets, filters, generics
+from .serializers import OwnedHouseSerializer, HousePurchaseSerializier, ImagesSerializer
 from .permissions import IsOwnerOrReadOnly
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 # Create your views here.
 #  T-views
 def owned_house_list(request):
@@ -71,20 +73,45 @@ def submit_purchase(request, house_id):
 class OwnedHouseViewSet(viewsets.ModelViewSet):
     queryset = OwnedHouse.objects.all()
     serializer_class = OwnedHouseSerializer
-    permission_classes = [IsOwnerOrReadOnly, IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly]
+    
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['furnishing_style', 'bedroom', 'bathroom', 'location']
+    search_fields = ['name', 'description', 'location']
+    ordering_fields = ['price', 'name', 'location']
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
         
-class HousePurchaseViewSet(viewsets.ModelViewSet):
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Images.objects.all()
+    serializer_class = ImagesSerializer
+    permission_classes = [IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly]
+    
+    def get_queryset(self):
+        return Images.objects.filter(house__owner=self.request.user)
+
+    def perform_create(self, serializer):
+        house = serializer.validated_data.get('house')
+        if house.owner != self.request.user:
+            raise PermissionDenied("You can not add images to this house")
+        serializer.save()
+        
+class HousePurchaseListCreate(generics.ListCreateAPIView):
     queryset = HousePurchase.objects.all()
     serializer_class = HousePurchaseSerializier
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return HousePurchase.objects.filter(buyer=self.request.user)
-        return HousePurchase.objects.name()
-    
+        return HousePurchase.objects.filter(buyer=self.request.user)
+        
     def perform_create(self, serializer):
         serializer.save(buyer=self.request.user)
+
+class HousePurchaseRetrieve(generics.RetrieveAPIView):
+    queryset = HousePurchase.objects.all()
+    serializer_class = HousePurchaseSerializier
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return HousePurchase.objects.filter(buyer=self.request.user)

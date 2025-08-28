@@ -3,6 +3,7 @@ from .models import OwnedHouse, HousePurchase, Images
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.urls import reverse
+from rest_framework.test import APITestCase, APIClient
 # Create your tests here.
 
 class OwnedHomeModelTests(TestCase):
@@ -69,6 +70,7 @@ class OwnedHomeTraditionalViewTests(TestCase):
         self.assertContains(response, self.house.name)
         
     def test_add_owned_house_view_auth(self):
+        initial_house_count = OwnedHouse.objects.count()
         self.client.login(username='testowner', password='password123')
         response = self.client.get(self.add_url)
         self.assertEqual(response.status_code,200)
@@ -87,7 +89,7 @@ class OwnedHomeTraditionalViewTests(TestCase):
         response = self.client.post(self.add_url, post_data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.list_url)
-        self.assertEqual(OwnedHouse.objects.count(), 2)
+        self.assertEqual(OwnedHouse.objects.count(),initial_house_count + 1)
         
     def test_edit_owned_house_view_auth(self):
         self.client.login(username='testowner', password='password123')
@@ -123,4 +125,8 @@ class OwnedHomeTraditionalViewTests(TestCase):
         self.client.login(username='otheruser', password='password123')
         response = self.client.post(self.delete_url)
         self.assertEqual(response.status_code, 404)
+        
+class OwnedHomeAPITests(APITestCase):
+    def setUp(self):
+        self.owner = User.objects.create_user(username='ownerapi', password='password123')
         
