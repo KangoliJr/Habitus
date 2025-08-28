@@ -15,7 +15,7 @@ urlpatterns = [
     path('my-applications/', views.my_applications, name='my_applications'),
     path('api/applications/', views.RentalApplicationListCreate.as_view(), name='rental-application-list-create'),
     path('api/applications/<int:pk>/', views.RentalApplicationRetrieve.as_view(), name='rental-application-retrieve'),
-        path('api/agreements/', views.LeaseAgreementListCreate.as_view(), name='lease-agreement-list-create'),
+    path('api/agreements/', views.LeaseAgreementListCreate.as_view(), name='lease-agreement-list-create'),
     path('api/agreements/<int:pk>/', views.LeaseAgreementRetrieve.as_view(), name='lease-agreement-retrieve'),
     
     # API urls

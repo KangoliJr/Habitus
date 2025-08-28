@@ -5,6 +5,7 @@ from .forms import OwnedHouseForm, HousePurchaseForm
 from rest_framework import viewsets, filters, generics
 from .serializers import OwnedHouseSerializer, HousePurchaseSerializier, ImagesSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
@@ -87,6 +88,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     queryset = Images.objects.all()
     serializer_class = ImagesSerializer
     permission_classes = [IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser]
     
     def get_queryset(self):
         return Images.objects.filter(house__owner=self.request.user)

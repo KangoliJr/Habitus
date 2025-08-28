@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RentalApplicationForm
 from django.contrib import messages
 from rest_framework import viewsets, filters, generics
+from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import RentalHouseSerializer, RentalApplicationSerializer, LeaseAgreementSerializer, ImagesSerializer
 from .permissions import IsLandlordOrReadOnly
@@ -58,6 +59,7 @@ class ImagesViewSet(viewsets.ModelViewSet):
     queryset = Images.objects.all()
     serializer_class = ImagesSerializer
     permission_classes = [IsLandlordOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser]
     
     def perform_create(self, serializer):
         house_instance = serializer.validated_data['house']

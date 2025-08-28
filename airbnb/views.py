@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets,filters
-from .models import AirbnbHouse, Booking
+from .models import AirbnbHouse, Booking, Images
 from .forms import AirbnbHouseForm
-from .serializers import AirbnbHouseSerializer, BookingSerializer
+from .serializers import AirbnbHouseSerializer, BookingSerializer, ImageSerializer
 from .permissions import IsHostOrReadOnly
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib import messages
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import AirbnbHouseFilter
@@ -102,6 +103,20 @@ class AirbnbHouseViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
+        
+class ImagesViewSet(viewsets.ModelViewSet):
+    queryset = Images.objects.all()
+    serializer_class = ImageSerializer
+    permission_classes = [IsHostOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated and self.request.user.is_host:
+            return Images.objects.filter(house__host=self.request.user)
+        return Images.objects.all()
         
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()

@@ -5,6 +5,8 @@ app_name = 'airbnb'
 
 router = DefaultRouter()
 router.register(r'houses', views.AirbnbHouseViewSet, basename='airbnb-houses')
+router.register(r'images', views.ImagesViewSet, basename='images')
+router.register(r'bookings', views.BookingViewSet, basename='bookings')
 app_name = 'airbnb'
 urlpatterns = [
     path('', views.airbnb_house_list, name='airbnb_house_list'),
