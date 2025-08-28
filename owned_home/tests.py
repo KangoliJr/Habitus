@@ -55,3 +55,15 @@ class OwnedHomeTraditionalViewTests(TestCase):
         self.add_url = reverse('owned_home:add_owned_house')
         self.edit_url = reverse('owned_home:edit_owned_house', args=[self.house.id])
         self.delete_url = reverse('owned_home:delete_owned_house', args=[self.house.id])
+        
+    def test_onwed_house_list_view(self):
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'owned_home/owned_house_list.html')
+        self.assertContains(response, self.house.name)
+
+    def test_owned_house_detail_view(self):
+        response = self.client.get(self.detail_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'owned_home/owned_house_detail.html')
+        self.assertContains(response, self.house.name)
