@@ -37,13 +37,13 @@ def edit_owned_house(request, house_id):
         if form.is_valid():
             form.save()
             return redirect('owned_home:owned_house_detail', house_id=house_id)
-        else:
-            form = OwnedHouseForm(instance=owned_house)
-        return render(request, 'owned_home/edit_owned_house.html', {'form': form, 'owned_house': owned_house})
+    else:
+        form = OwnedHouseForm(instance=owned_house)
+    return render(request, 'owned_home/edit_owned_house.html', {'form': form, 'owned_house': owned_house})
     
 @login_required
-def delete_owned_house(request):
-    owned_house = get_object_or_404(OwnedHouse, owner=request.user)
+def delete_owned_house(request, house_id):
+    owned_house = get_object_or_404(OwnedHouse, id=house_id, owner=request.user)
     if request.method == 'POST':
         owned_house.delete()
         return redirect('owned_home:owned_house_list')

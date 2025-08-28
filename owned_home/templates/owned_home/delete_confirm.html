@@ -1,0 +1,15 @@
+{% extends 'owned_home/base.html' %}
+
+{% block content %}
+<h2>Confirm Deletion</h2>
+<p>Are you sure you want to delete the house at {{ owned_house.location }}?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+    <a href="{% url 'owned_home:owned_house_detail' owned_house.id %}">
+        <button type="button">Cancel</button>
+    </a>
+</form>
+
+{% endblock %}

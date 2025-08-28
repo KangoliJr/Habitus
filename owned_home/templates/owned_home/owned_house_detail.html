@@ -1,6 +1,17 @@
 {% extends 'owned_home/base.html' %}
 
 {% block content %}
+<div class="slider-container">
+    <div class="slider">
+        {% for image in house.images.all %}
+        <div class="slide">
+            <img src="{{ image.image.url }}" alt="{{ house.name }}">
+        </div>
+        {% endfor %}
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
+    </div>
+</div>
 <h2>{{ house.name }}</h2>
 <p>Owner: {{ house.owner.username }}</p>
 <p>Price: ${{ house.price }}</p>
