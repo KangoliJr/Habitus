@@ -3,7 +3,8 @@ from . models import RentalHouse, RentalApplication, LeaseAgreement
 from django.contrib.auth.decorators import login_required
 from .forms import RentalApplicationForm
 from django.contrib import messages
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import RentalHouseSerializer, RentalApplicationSerializer, LeaseAgreementSerializer
 from .permissions import IsLandlordOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -45,6 +46,10 @@ class RentalHouseViewSet(viewsets.ModelViewSet):
     queryset = RentalHouse.objects.all()
     serializer_class = RentalHouseSerializer
     permission_classes = [IsLandlordOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['furnishing_style', 'bedroom', 'bathroom', 'location']
+    search_fields = ['name', 'location', ]
+    ordering_fields = ['monthly_rent', 'name']
     
     def perform_create(self, serializer):
         serializer.save(landlord=self.request.user)

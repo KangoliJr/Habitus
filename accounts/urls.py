@@ -24,10 +24,10 @@ traditional_urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', LoginView.as_view(template_name='accounts/login.html', success_url=reverse_lazy('homepage')), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('dashboard/', views.user_profile_view, name='user_profile_dashboard'),
     path('profile/', views.user_profile_view, name='user_profile_view'), 
     path('profile/edit/', views.user_profile_edit, name='user_profile_edit'),
     path('profile/upgrade-role/', views.upgrade_role, name='upgrade_role'),
+
 ]
 api_urlpatterns = [
     # api

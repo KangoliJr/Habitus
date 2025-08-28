@@ -21,11 +21,8 @@ class RentalApplicationSerializer(serializers.ModelSerializer):
     tenant_name = serializers.CharField(source='tenant.username', read_only=True)
     class Meta:
         model = RentalApplication
-        fields = ['id', 'landlord', 'description', 'monthly_rent', 
-            'security_deposit', 'furnishing_style', 'bedroom', 
-            'bathroom', 'location', 'rules', 'amenities','images',
-        ]
-
+        fields = ['id', 'house_id', 'tenant_name','move_in_date', 'lease_duration_months','check_out_date', 'status']
+ 
 class LeaseAgreementSerializer(serializers.ModelSerializer):
     application_id = serializers.CharField(source='application.id')
     tenant_name = serializers.CharField(source='tenant_user.username', read_only=True)
@@ -34,3 +31,8 @@ class LeaseAgreementSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaseAgreement
         fields = ['__all__']
+        
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = ['id', 'house', 'images']

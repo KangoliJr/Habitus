@@ -52,7 +52,7 @@ class RentalApplication(models.Model):
         ('Leased', 'Leased'),
     ]
     tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_application')
-    house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='application')
+    house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='applications')
     move_in_date = models.DateField()
     lease_duration_months = models.IntegerField(help_text="Duration of the lease in months.")
     check_out_date = models.DateField()
