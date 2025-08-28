@@ -3,7 +3,7 @@ from .models import Profile,User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from .forms import CustomUserCreationForm,CustomUserChangeForm,ProfileForm
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserRegistrationSerializer, ProfileSerializer
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -98,7 +98,7 @@ linking a profile to a user
 updating the profile to only users to edit their own profile
 """ 
 class RegistrationAPIView(generics.CreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
@@ -110,7 +110,7 @@ class RegistrationAPIView(generics.CreateAPIView):
     
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -136,7 +136,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
             
 # role upgrades
 class RoleUpgradeAPIView(generics.UpdateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserRegistrationSerializer
     permission_classes = [IsAuthenticated]
     
     def get_object(self):
