@@ -54,6 +54,8 @@ class HousePurchase(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     purchase_date = models.DateTimeField(auto_now_add=True)
     
+    def __str__(self):
+        return f"Purchase of {self.house.name} by {self.buyer.username}"
 # dynamic folder
 def house_directory_path(instance, filename):
     sanitized_name = instance.house.name.replace(" ", "_") 
