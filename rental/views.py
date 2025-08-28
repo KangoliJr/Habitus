@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from . models import RentalHouse, RentalApplication, LeaseAgreement
+from . models import RentalHouse, RentalApplication, LeaseAgreement, Images
 from django.contrib.auth.decorators import login_required
 from .forms import RentalApplicationForm
 from django.contrib import messages
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, generics
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import RentalHouseSerializer, RentalApplicationSerializer, LeaseAgreementSerializer
+from .serializers import RentalHouseSerializer, RentalApplicationSerializer, LeaseAgreementSerializer, ImagesSerializer
 from .permissions import IsLandlordOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
@@ -53,8 +53,17 @@ class RentalHouseViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(landlord=self.request.user)
+
+class ImagesViewSet(viewsets.ModelViewSet):
+    queryset = Images.objects.all()
+    serializer_class = ImagesSerializer
+    permission_classes = [IsLandlordOrReadOnly]
+    
+    def perform_create(self, serializer):
+        house_instance = serializer.validated_data['house']
+        serializer.save(house=house_instance)
         
-class RentalApplicationViewSet(viewsets.ModelViewSet):
+class RentalApplicationListCreate(generics.ListCreateAPIView):
     queryset = RentalApplication.objects.all()
     serializer_class = RentalApplicationSerializer
     permission_classes = [IsAuthenticated]
@@ -64,11 +73,26 @@ class RentalApplicationViewSet(viewsets.ModelViewSet):
         
     def get_queryset(self):
         return RentalApplication.objects.filter(tenant=self.request.user)
+class RentalApplicationRetrieve(generics.RetrieveAPIView):
+    queryset = RentalApplication.objects.all()
+    serializer_class = RentalApplicationSerializer
+    permission_classes = [IsAuthenticated]
+def get_queryset(self):
+        return RentalApplication.objects.filter(tenant=self.request.user)
     
-class LeaseAgreementViewSet(viewsets.ModelViewSet):
+    
+class LeaseAgreementListCreate(generics.ListCreateAPIView):
     queryset = LeaseAgreement.objects.all()
     serializer_class = LeaseAgreementSerializer
     permission_classes = [IsAuthenticated]
+        
+    def get_queryset(self):
+        return LeaseAgreement.objects.filter(tenant=self.request.user)
     
+class LeaseAgreementRetrieve(generics.RetrieveAPIView):
+    queryset = LeaseAgreement.objects.all()
+    serializer_class = LeaseAgreementSerializer
+    permission_classes = [IsAuthenticated]
+        
     def get_queryset(self):
         return LeaseAgreement.objects.filter(tenant=self.request.user)

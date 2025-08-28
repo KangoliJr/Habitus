@@ -4,7 +4,7 @@ from .models import RentalHouse, RentalApplication, LeaseAgreement, Images
 class ImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Images
-        fields = ['images',]
+        fields = ['id', 'house', 'images',]
         
 
 class RentalHouseSerializer(serializers.ModelSerializer):
@@ -32,7 +32,3 @@ class LeaseAgreementSerializer(serializers.ModelSerializer):
         model = LeaseAgreement
         fields = ['__all__']
         
-class ImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Images
-        fields = ['id', 'house', 'images']
