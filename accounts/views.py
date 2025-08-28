@@ -3,8 +3,9 @@ from .models import Profile,User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from .forms import CustomUserCreationForm,CustomUserChangeForm,ProfileForm
-from .serializers import UserRegistrationSerializer, ProfileSerializer
+from .serializers import UserRegistrationSerializer, ProfileSerializer,PasswordChangeSerializer
 from rest_framework import viewsets, permissions, generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -98,15 +99,23 @@ linking a profile to a user
 updating the profile to only users to edit their own profile
 """ 
 class RegistrationAPIView(generics.CreateAPIView):
+    queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
     
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        Profile.objects.create(user=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+class PasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = request.user
+            if not user.check_password(serializer.validated_data['old_password']):
+                return Response({'error': 'Incorrect old password'}, status=status.HTTP_400_BAD_REQUEST)
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
+        
     
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
@@ -116,8 +125,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(pk=self.request.user.pk)
 
-    
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['GET','PUT', 'PATCH'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)

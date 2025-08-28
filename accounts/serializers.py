@@ -5,13 +5,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True) 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 
+        fields = ['username', 'email', 'first_name', 'last_name', 'password',
             'date_of_birth', 'age', 'gender', 'phone_number', 'country',
         ]
         
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -41,6 +44,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
             profile_instance.save()
             
         return instance
+    
+class RoleUpgradeSerializer(serializers.Serializer):
+    role = serializers.ChoiceField(
+        choices=['host', 'landlord', 'seller'],
+        required=True
+    )
             
         
         
