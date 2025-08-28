@@ -66,11 +66,6 @@ class Booking(models.Model):
     def __str__(self):
         return f"Booking for {self.house.name} by {self.customer.username}"
 
-# class Checkdates(models.Model):
-#     house = models.ForeignKey(AirbnbHouse, on_delete=models.CASCADE, related_name='availability')
-#     checkin = models.DateField()
-#     checkout = models.DateField()  
-#     booking = models.ForeignKey(Booking, on_delete=models.SET_NULL, null=True, blank=True, related_name='booked_dates')
     
     def __str__(self):
         status = 'Booked' if self.booking else 'Available'
