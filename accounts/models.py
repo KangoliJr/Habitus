@@ -30,6 +30,9 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     
+    is_host = models.BooleanField(default=False)
+    is_landlord = models.BooleanField(default=False) 
+    is_seller = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Your new Profile {self.user.username}"

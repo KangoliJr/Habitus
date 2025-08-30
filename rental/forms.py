@@ -7,7 +7,7 @@ class RentalHouseForm(forms.ModelForm):
         fields = [
            'name','description', 'monthly_rent', 'security_deposit', 
             'furnishing_style', 'bedroom', 'bathroom', 'location', 
-            'rules', 'amenities'
+            'rules', 'amenities', 'is_available'
         ]
         
 class RentalApplicationForm(forms.ModelForm):

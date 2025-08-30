@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import User, Profile
 from django.contrib.auth import get_user_model
-from rest_framework.authtoken.models import Token
+
 
 User = get_user_model()
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -43,17 +43,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['bio', 'profile_picture']
         
 class UserProfileSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(required=True)
-    
+    profile = ProfileSerializer()
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'phone_number', 
-                  'date_of_birth', 'age', 'gender', 'country', 'profile'
-                ]
+        fields = ['id', 'username', 'email', 'profile']
         read_only_fields = ['username', 'id']
         
     def update(self,instance, validated_data):
-        profile_data = validated_data('profile',None)
+        profile_data = validated_data('profile',{})
         
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

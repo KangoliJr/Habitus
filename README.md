@@ -75,8 +75,11 @@ http://127.0.0.1:8000/accounts/api/change-password/
     "old_password": "Mrs.Jojo@1234",
     "new_password": "Mrs.Jojo@12345"
 }
+Jojo
+{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjY1MTI3MSwiaWF0IjoxNzU2NTY0ODcxLCJqdGkiOiJlY2RmYzNlNTExMjc0NjJjYjg2N2FhYzQ1ZWRiZDk5OCIsInVzZXJfaWQiOiIyIn0.zewn4qQ7zs-UJB3uT-UFmWQvcO0pgCfjsZReC6fzOEg","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTg1MzMyLCJpYXQiOjE3NTY1ODE3MzIsImp0aSI6IjUyNzFjNDljOTA5MTRmYmE4NTZjOTRjYzYzOGM2YTVjIiwidXNlcl9pZCI6IjIifQ.cutOgCwHVAIDRutI2JVGJwYOeRrLvoY2nqvpdndmwjM"}
 
-{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjY1MTI3MSwiaWF0IjoxNzU2NTY0ODcxLCJqdGkiOiJlY2RmYzNlNTExMjc0NjJjYjg2N2FhYzQ1ZWRiZDk5OCIsInVzZXJfaWQiOiIyIn0.zewn4qQ7zs-UJB3uT-UFmWQvcO0pgCfjsZReC6fzOEg","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTY4NDcxLCJpYXQiOjE3NTY1NjQ4NzEsImp0aSI6ImJkZGEwYWJhN2E2YjQ4MGU5ZGI1MDdmZjk2YWMyYTlhIiwidXNlcl9pZCI6IjIifQ.kaN29vgP4dOAAbk9B6oCYz-t-WgVhL7AZEnb52fkrOQ"}
+Tommy
+{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjY2ODg2OSwiaWF0IjoxNzU2NTgyNDY5LCJqdGkiOiJmNTRiOTRiM2M0MjU0MTY4OGUxMjZjZDFlZWUzMDBhMCIsInVzZXJfaWQiOiIxIn0.KCvQMby5rnKl9H6OcmnWvlCxN1J7pxu7lTbZFjcNlVk","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTg2MDY5LCJpYXQiOjE3NTY1ODI0NjksImp0aSI6IjgzNzJhMzgzNDU2ODRjMDU4NjkxY2JmYzI3MmY1MzRmIiwidXNlcl9pZCI6IjEifQ.YonQcK6IBxmWEK8rTdQqXtpowOoM5v0Q_YwiPkTt6WQ"}
 UPGRADE USER ROLE
 http://127.0.0.1:8000/accounts/api/upgrade-role/
 
@@ -146,5 +149,53 @@ GET
     "checkout": "2025-10-05",
     "house": "2"
  }
+
+
+**RENTAL HOUSE**
+Ld
+1 Create a rental house
+Method POST
+http://127.0.0.1:8000/rental/api/houses/
+
+{
+    "name": "Spacious Apartment",
+    "description": "2-bedroom apartment with a great view.",
+    "monthly_rent": 1200.00,
+    "security_deposit": 2400.00,
+    "furnishing_style": "Semi_Furnished",
+    "bedroom": "2_bedroom",
+    "bathroom": "2_bathroom",
+    "location": "Lavington",
+    "rules": "No smoking.",
+    "amenities": "Wi-Fi, Balcony, Parking",
+    "is_available": true
+}
+
+2 Add an image
+Method Post
+http://127.0.0.1:8000/rental/api/houses/<house_id>/images/
+
+
+Tenant
+4 List houses
+Method GET
+http://127.0.0.1:8000/rental/api/houses/
+
+5 submit rental application
+Method Post
+http://127.0.0.1:8000/rental/api/houses/<house_id>/applications/
+{
+    "move_in_date": "2025-10-01",
+    "lease_duration_months": 12
+    "house_id": "6"
+}
+
+6 view applications
+Method GET
+http://127.0.0.1:8000/rental/api/applications/
+
+7 view lease agreement
+Method GET
+http://127.0.0.1:8000/rental/api/agreements/<agreement_id>/
 
 

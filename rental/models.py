@@ -80,7 +80,7 @@ class LeaseAgreement(models.Model):
 # dynamic folder
 def house_directory_path(instance, filename):
     folder_name = slugify(f"house-{instance.house.pk}")
-    return os.path.join(f'rental_images/{folder_name}', filename)
+    return os.path.join(f'rental/{folder_name}', filename)
     # return os.path.join(f'airbnb/house_{instance.house.pk}', filename)
 class Images(models.Model):
     image = models.ImageField(upload_to=house_directory_path)
