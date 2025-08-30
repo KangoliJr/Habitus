@@ -5,6 +5,6 @@ class AirbnbHouseForm(forms.ModelForm):
     class Meta:
         model = AirbnbHouse
         fields = [
-            'description', 'price', 'furnishing_style',
+            'name', 'description', 'price', 'furnishing_style',
             'bedroom', 'bathroom', 'location', 'rules', 'amenities'
         ]

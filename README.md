@@ -76,6 +76,7 @@ http://127.0.0.1:8000/accounts/api/change-password/
     "new_password": "Mrs.Jojo@12345"
 }
 
+{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjY1MTI3MSwiaWF0IjoxNzU2NTY0ODcxLCJqdGkiOiJlY2RmYzNlNTExMjc0NjJjYjg2N2FhYzQ1ZWRiZDk5OCIsInVzZXJfaWQiOiIyIn0.zewn4qQ7zs-UJB3uT-UFmWQvcO0pgCfjsZReC6fzOEg","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTY4NDcxLCJpYXQiOjE3NTY1NjQ4NzEsImp0aSI6ImJkZGEwYWJhN2E2YjQ4MGU5ZGI1MDdmZjk2YWMyYTlhIiwidXNlcl9pZCI6IjIifQ.kaN29vgP4dOAAbk9B6oCYz-t-WgVhL7AZEnb52fkrOQ"}
 UPGRADE USER ROLE
 http://127.0.0.1:8000/accounts/api/upgrade-role/
 
@@ -91,3 +92,59 @@ http://127.0.0.1:8000/accounts/api/upgrade-role/
 
 
 **AIRBNB**
+1 Creating a new house
+http://127.0.0.1:8000/airbnb/api/houses/
+
+{
+    "name": "Luxury House in the Suburbs",
+    "description": "A beautiful house with a great view.",
+    "price": 1500.00,
+    "furnishing_style": "Fully_Furnished",
+    "bedroom": "3_bedroom",
+    "bathroom": "2_bathroom",
+    "location": "Nairobi",
+    "rules": "No parties allowed.",
+    "amenities": "Wi-Fi, Pool, Gym"
+}
+2 adding images to the particular house
+http://127.0.0.1:8000/airbnb/api/houses/<house_id>/images/
+
+3 Update a House 
+PATCH
+http://127.0.0.1:8000/airbnb/api/houses/<house_id>/
+{
+    "price": 1600.00,
+    "amenities": "Wi-Fi, Pool, Gym, Smart TV"
+}
+
+4 Delete a house
+ http://127.0.0.1:8000/airbnb/api/houses/<house_id>/
+
+
+5 Making a booking
+http://127.0.0.1:8000/airbnb/api/houses/<house_id>/bookings/
+
+{
+    "checkin": "2025-10-01",
+    "checkout": "2025-10-05"
+    "house": "2"
+}
+
+6 Deleting a booking
+http://127.0.0.1:8000/airbnb/api/bookings/<booking id>/
+{
+    "checkin": "2025-10-01",
+    "checkout": "2025-10-05",
+    "house": "2"
+}
+
+7 Get the house
+GET
+ http://127.0.0.1:8000/airbnb/api/houses/<house id>/
+ {
+    "checkin": "2025-10-01",
+    "checkout": "2025-10-05",
+    "house": "2"
+ }
+
+
