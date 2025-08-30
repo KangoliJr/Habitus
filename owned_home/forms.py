@@ -13,4 +13,4 @@ class OwnedHouseForm(forms.ModelForm):
 class HousePurchaseForm(forms.ModelForm):
     class Meta:
         model = HousePurchase
-        fields = ['house', 'buyer', 'status']
+        fields = []

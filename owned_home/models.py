@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 import os
 
 # Create your models here.
@@ -31,7 +32,7 @@ class OwnedHouse(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_houses')
     description = models.TextField()
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
     bedroom = models.CharField(max_length=20, choices=BEDROOM_TYPES)
     bathroom = models.CharField(max_length=20, choices=BATHROOM_TYPES)
@@ -50,7 +51,7 @@ class HousePurchase(models.Model):
         ('cancelled', 'Cancelled'),
     ]
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='purchases')
-    house = models.OneToOneField(OwnedHouse, on_delete=models.CASCADE, related_name='purchases')
+    house = models.ForeignKey(OwnedHouse, on_delete=models.CASCADE, related_name='house_purchases')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     purchase_date = models.DateTimeField(auto_now_add=True)
     
@@ -58,8 +59,7 @@ class HousePurchase(models.Model):
         return f"Purchase of {self.house.name} by {self.buyer.username}"
 # dynamic folder
 def house_directory_path(instance, filename):
-    sanitized_name = instance.house.name.replace(" ", "_") 
-    folder_name = f'{instance.house_id}_{sanitized_name}'
+    folder_name = slugify(f"{instance.house.pk}")
     return os.path.join(f'owned_home/{folder_name}', filename)
 
 class Images(models.Model):

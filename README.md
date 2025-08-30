@@ -76,10 +76,7 @@ http://127.0.0.1:8000/accounts/api/change-password/
     "new_password": "Mrs.Jojo@12345"
 }
 Jojo
-{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjY1MTI3MSwiaWF0IjoxNzU2NTY0ODcxLCJqdGkiOiJlY2RmYzNlNTExMjc0NjJjYjg2N2FhYzQ1ZWRiZDk5OCIsInVzZXJfaWQiOiIyIn0.zewn4qQ7zs-UJB3uT-UFmWQvcO0pgCfjsZReC6fzOEg","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTg1MzMyLCJpYXQiOjE3NTY1ODE3MzIsImp0aSI6IjUyNzFjNDljOTA5MTRmYmE4NTZjOTRjYzYzOGM2YTVjIiwidXNlcl9pZCI6IjIifQ.cutOgCwHVAIDRutI2JVGJwYOeRrLvoY2nqvpdndmwjM"}
 
-Tommy
-{"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NjY2ODg2OSwiaWF0IjoxNzU2NTgyNDY5LCJqdGkiOiJmNTRiOTRiM2M0MjU0MTY4OGUxMjZjZDFlZWUzMDBhMCIsInVzZXJfaWQiOiIxIn0.KCvQMby5rnKl9H6OcmnWvlCxN1J7pxu7lTbZFjcNlVk","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTg2MDY5LCJpYXQiOjE3NTY1ODI0NjksImp0aSI6IjgzNzJhMzgzNDU2ODRjMDU4NjkxY2JmYzI3MmY1MzRmIiwidXNlcl9pZCI6IjEifQ.YonQcK6IBxmWEK8rTdQqXtpowOoM5v0Q_YwiPkTt6WQ"}
 UPGRADE USER ROLE
 http://127.0.0.1:8000/accounts/api/upgrade-role/
 
@@ -199,3 +196,39 @@ Method GET
 http://127.0.0.1:8000/rental/api/agreements/<agreement_id>/
 
 
+**OWNED HOME**
+1 create a house
+Method Post
+http://127.0.0.1:8000/owned-home/api/houses/
+{
+    "name": "Luxury Home",
+    "description": "A beautiful 3-bedroom house with a garden.",
+    "price": 550000.00,
+    "furnishing_style": "Fully_Furnished",
+    "bedroom": "3_bedroom",
+    "bathroom": "2_bathroom",
+    "location": "Karen",
+    "rules": "No pets.",
+    "amenities": "Swimming Pool, Garage"
+}
+
+2 Add image
+Method Post
+http://127.0.0.1:8000/owned-home/api/houses/<house_id>/images/
+
+3 view the house units
+Method Ger
+http://127.0.0.1:8000/owned-home/api/houses/
+
+buyer
+4 List the houses available
+Method Get
+ http://127.0.0.1:8000/owned-home/api/houses/
+
+ 5 submit purchaese
+ Method Post
+ http://127.0.0.1:8000/owned-home/api/houses/<house_id>/purchases/
+
+ 6 View the purchases
+ Method Get
+ http://127.0.0.1:8000/owned-home/api/houses/<house_id>/purchases/

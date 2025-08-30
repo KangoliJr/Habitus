@@ -1,11 +1,14 @@
 from django.urls import path, include
 from .import views
 from rest_framework.routers import DefaultRouter
+from rest_framework_nested import routers
 
 router = DefaultRouter()
 router.register(r'houses', views.OwnedHouseViewSet, basename='owned-house'),
-# router.register(r'purchases', views.HousePurchaseViewSet, basename='house-purchase'),
-router.register(r'images', views.ImageViewSet, basename='image')
+
+houses_router = routers.NestedDefaultRouter(router, r'houses', lookup='house')
+houses_router.register(r'images', views.ImageViewSet, basename='house-images')
+houses_router.register(r'purchases', views.HousePurchaseViewSet, basename='house-purchases')
 
 app_name = 'owned_home'
 
@@ -18,6 +21,6 @@ urlpatterns = [
     path('<int:house_id>/delete/', views.delete_owned_house, name='delete_owned_house'),
     
     path('api/', include(router.urls)),
-    path('api/purchases/', views.HousePurchaseListCreate.as_view(), name='house-purchase-list-create'),
-    path('api/purchases/<int:pk>/', views.HousePurchaseRetrieve.as_view(), name='house-purchase-retrieve'),
+    path('api/', include(houses_router.urls)),
+   
 ]
