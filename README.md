@@ -14,7 +14,6 @@ DELETE/airbnb/api/houses/<id>/
 Accounts
 accounts/api/(API root)
 GET/accounts/api/users/
-GET/accounts/api/users/me
 GET/accounts/api/profiles/
 (POST/PATCH/PUT)/accounts/api/profiles/<id> 
 PATCH/accounts/api/profiles/upgrade-role

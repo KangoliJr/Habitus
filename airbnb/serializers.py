@@ -11,15 +11,15 @@ class ImageSerializer(serializers.ModelSerializer):
         
     
 class BookingSerializer(serializers.ModelSerializer):
-    customer = serializers.CharField(source='customer.username', read_only=True)
-    house = serializers.CharField(source='house.name', read_only=True)
+    customer_username = serializers.CharField(source='customer.username', read_only=True)
+    house_name = serializers.CharField(source='house.name', read_only=True)
     class Meta:
         model = Booking
         fields = [
             'id', 'house', 'checkin', 'checkout', 'status', 'created_at',
             'customer_username', 'house_name'
         ]
-        read_only_fields = ['id', 'customer', 'house', 'status''created_at']
+        read_only_fields = ['id', 'customer_username', 'house_name', 'status', 'created_at']
         
     def validate(self, data):
         checkin_date = data.get('checkin')

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 import os
 from django.utils import timezone
+from django.utils.text import slugify
 
 class AirbnbHouse(models.Model):
     FURNISHING_STYLES = [
@@ -28,11 +29,11 @@ class AirbnbHouse(models.Model):
         ('all_ensuite', 'All Ensuite'),
         ('other', 'Other'),
     ]
-    # house_id = models.BigAutoField(primary_key=True)
+    
     name = models.CharField(max_length=200)
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='airbnb_houses')
     description = models.TextField()
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
     bedroom = models.CharField(max_length=20, choices=BEDROOM_TYPES)
     bathroom = models.CharField(max_length=20, choices=BATHROOM_TYPES)
@@ -56,9 +57,6 @@ class Booking(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
     
-    # def __str__(self):
-    #     return f"Booking for {self.house.name} by {self.customer.username}"
-    
     def clean(self):
         if self.checkin >= self.checkout:
             raise ValidationError("Check-out date must be after check-in date.")
@@ -72,8 +70,7 @@ class Booking(models.Model):
         return f"{self.house.name}: {self.checkin.strftime('%Y-%m-%d')} to {self.checkout.strftime('%Y-%m-%d')} ({status})"  
 # dynamic folder
 def house_directory_path(instance, filename):
-    sanitized_name = instance.house.name.replace(" ", "_") 
-    folder_name = f'{instance.house_id}_{sanitized_name}'
+    folder_name = slugify(f"{instance.house.name}-{instance.house.pk}")
     return os.path.join(f'airbnb/{folder_name}', filename)
     # return os.path.join(f'airbnb/house_{instance.house.pk}', filename)
 
