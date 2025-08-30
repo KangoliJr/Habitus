@@ -111,12 +111,14 @@ class ImagesViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        serializer.save()
+        house_id = self.kwargs.get('house_pk')
+        house = self.request.user.airbnb_houses.get(pk=house_id)
+        serializer.save(house=house)
 
     def get_queryset(self):
         if self.request.user.is_authenticated and self.request.user.is_host:
             return Images.objects.filter(house__host=self.request.user)
-        return Images.objects.all()
+        return Images.objects.none()
         
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
@@ -127,4 +129,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(customer=self.request.user)
         
     def perform_create(self, serializer):
-        serializer.save(customer=self.request.user)
+        house_id = self.kwargs.get('house_pk')
+        house = AirbnbHouse.objects.get(pk=house_id)
+        serializer.context['house'] = house
+        serializer.save(customer=self.request.user, house=house)

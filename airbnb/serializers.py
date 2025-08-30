@@ -24,7 +24,7 @@ class BookingSerializer(serializers.ModelSerializer):
     def validate(self, data):
         checkin_date = data.get('checkin')
         checkout_date = data.get('checkout')
-        house = data.get('house')
+        house = self.context.get('house') or data.get('house')
         
         # Check for booking conflicts
         if Booking.objects.filter(
