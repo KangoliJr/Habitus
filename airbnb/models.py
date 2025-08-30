@@ -72,7 +72,7 @@ class Booking(models.Model):
 def house_directory_path(instance, filename):
     folder_name = slugify(f"{instance.house.name}-{instance.house.pk}")
     return os.path.join(f'airbnb/{folder_name}', filename)
-    # return os.path.join(f'airbnb/house_{instance.house.pk}', filename)
+   
 
 
 class Images(models.Model):
