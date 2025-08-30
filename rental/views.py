@@ -3,13 +3,12 @@ from . models import RentalHouse, RentalApplication, LeaseAgreement, Images
 from django.contrib.auth.decorators import login_required
 from .forms import RentalApplicationForm
 from django.contrib import messages
-from rest_framework import viewsets, filters, generics
+from rest_framework import viewsets, filters
 from rest_framework.parsers import MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import RentalHouseSerializer, RentalApplicationSerializer, LeaseAgreementSerializer, ImagesSerializer
-from .permissions import IsLandlordOrReadOnly
+from .permissions import IsLandlordOrReadOnly, IsLandlordOrTenant
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-
 
 # Create your views here.
 
@@ -54,7 +53,7 @@ class RentalHouseViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(landlord=self.request.user)
-
+    
 class ImagesViewSet(viewsets.ModelViewSet):
     queryset = Images.objects.all()
     serializer_class = ImagesSerializer
@@ -62,39 +61,45 @@ class ImagesViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
     
     def perform_create(self, serializer):
-        house_instance = serializer.validated_data['house']
-        serializer.save(house=house_instance)
+        house_id = self.kwargs['house_pk']
+        house = RentalHouse.objects.get(pk=house_id)
+        serializer.save(house=house)
         
-class RentalApplicationListCreate(generics.ListCreateAPIView):
+    def get_queryset(self):
+        if self.request.user.is_authenticated and self.request.user.profile.is_landlord:
+            return Images.objects.filter(house__landlord=self.request.user)
+        return Images.objects.filter(house__is_available=True)
+    
+class RentalApplicationViewSet(viewsets.ModelViewSet):
     queryset = RentalApplication.objects.all()
     serializer_class = RentalApplicationSerializer
     permission_classes = [IsAuthenticated]
     
     def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user)
+        house_id = self.kwargs['house_pk']
+        house = RentalHouse.objects.get(pk=house_id)
+        serializer.save(tenant=self.request.user, house=house)
         
-    def get_queryset(self):
-        return RentalApplication.objects.filter(tenant=self.request.user)
-class RentalApplicationRetrieve(generics.RetrieveAPIView):
-    queryset = RentalApplication.objects.all()
-    serializer_class = RentalApplicationSerializer
-    permission_classes = [IsAuthenticated]
-def get_queryset(self):
-        return RentalApplication.objects.filter(tenant=self.request.user)
-    
-    
-class LeaseAgreementListCreate(generics.ListCreateAPIView):
+    def  get_queryset(self):
+        user = self.request.user
+        if user.profile.is_landlord:
+            return RentalApplication.objects.filter(house__landlord=user)
+        else:
+            return RentalApplication.objects.filter(tenant=user)
+
+class LeaseAgreementViewSet(viewsets.ModelViewSet):
     queryset = LeaseAgreement.objects.all()
     serializer_class = LeaseAgreementSerializer
-    permission_classes = [IsAuthenticated]
-        
-    def get_queryset(self):
-        return LeaseAgreement.objects.filter(tenant=self.request.user)
+    permission_classes = [IsLandlordOrTenant]
     
-class LeaseAgreementRetrieve(generics.RetrieveAPIView):
-    queryset = LeaseAgreement.objects.all()
-    serializer_class = LeaseAgreementSerializer
-    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        application_id = self.kwargs['application_pk']
+        application = RentalApplication.objects.get(pk=application_id)
+        serializer.save(application=application)
         
     def get_queryset(self):
-        return LeaseAgreement.objects.filter(tenant=self.request.user)
+        user = self.request.user
+        if user.profile.is_landlord:
+            return LeaseAgreement.objects.filter(application__house__landlord=user)
+        else:
+            return LeaseAgreement.objects.filter(application__tenant=user)

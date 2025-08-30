@@ -22,5 +22,6 @@ class RentalApplicationAdmin(admin.ModelAdmin):
 
 @admin.register(LeaseAgreement)
 class LeaseAgreementAdmin(admin.ModelAdmin):
-    list_display = ('application', 'tenant_user', 'landlord_user', 'is_signed_by_tenant')
-    list_filter = ('is_signed_by_tenant',)
+    list_display = ('application', 'is_signed_by_tenant')
+    list_filter = ('is_signed_by_tenant', 'is_signed_by_landlord')
+    

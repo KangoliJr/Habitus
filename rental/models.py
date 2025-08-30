@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 import os
+from datetime import timedelta
+from django.utils.text import slugify
 
 class RentalHouse(models.Model):
     FURNISHING_STYLES = [
@@ -31,7 +33,7 @@ class RentalHouse(models.Model):
     landlord = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_houses')
     description = models.TextField()
     monthly_rent = models.DecimalField(max_digits=10, decimal_places=2)
-    security_deposit = models.FloatField(default=0)
+    security_deposit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     furnishing_style = models.CharField(max_length=20, choices=FURNISHING_STYLES)
     bedroom = models.CharField(max_length=20, choices=BEDROOM_TYPES)
     bathroom = models.CharField(max_length=20, choices=BATHROOM_TYPES)
@@ -51,7 +53,7 @@ class RentalApplication(models.Model):
         ('Rejected', 'Rejected'),
         ('Leased', 'Leased'),
     ]
-    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_application')
+    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rental_applications')
     house = models.ForeignKey(RentalHouse, on_delete=models.CASCADE, related_name='applications')
     move_in_date = models.DateField()
     lease_duration_months = models.IntegerField(help_text="Duration of the lease in months.")
@@ -59,14 +61,15 @@ class RentalApplication(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
    
-    
+    @property
+    def check_out_date(self):
+        return self.move_in_date + timedelta(days=self.lease_duration_months * 30) 
+
     def __str__(self):
-        return f"Booking for {self.house.name} by {self.tenant.username}"
+        return f"Application for {self.house.name} by {self.tenant.username}"
     
 class LeaseAgreement(models.Model):
     application = models.OneToOneField(RentalApplication, on_delete=models.CASCADE, related_name='lease_agreement')
-    landlord_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='landlord_leases')
-    tenant_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tenant_leases')
     start_date = models.DateField()
     end_date = models.DateField()
     is_signed_by_tenant = models.BooleanField(default=False)
@@ -76,12 +79,11 @@ class LeaseAgreement(models.Model):
         return f"Lease for {self.application.house.name}"
 # dynamic folder
 def house_directory_path(instance, filename):
-    sanitized_name = instance.house.name.replace(" ", "_") 
-    folder_name = f'{instance.house_id}_{sanitized_name}'
-    return os.path.join(f'rental/{folder_name}', filename)
+    folder_name = slugify(f"house-{instance.house.pk}")
+    return os.path.join(f'rental_images/{folder_name}', filename)
     # return os.path.join(f'airbnb/house_{instance.house.pk}', filename)
 class Images(models.Model):
-    images = models.ImageField(upload_to=house_directory_path)
+    image = models.ImageField(upload_to=house_directory_path)
     house = models.ForeignKey(RentalHouse,on_delete=models.CASCADE, related_name='images')
     
     def __str__(self):
