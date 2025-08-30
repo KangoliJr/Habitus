@@ -1,17 +1,39 @@
 from rest_framework import serializers
 from .models import User, Profile
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
 
+User = get_user_model()
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True) 
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    date_of_birth = serializers.DateField(required=False)
+    age = serializers.IntegerField(required=False)
+    gender = serializers.CharField(required=False, allow_blank=True)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
+    country = serializers.CharField(required=False, allow_blank=True)
+    
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'password',
-            'date_of_birth', 'age', 'gender', 'phone_number', 'country',
-        ]
+        fields = ['username', 'email', 'password', 'first_name', 'last_name',
+                  'date_of_birth', 'age', 'gender', 'phone_number', 'country']
+        extra_kwargs = {'password': {'write_only': True}}
         
     def create(self, validated_data):
+        profile_data = {
+            'first_name': validated_data.pop('first_name', ''),
+            'last_name': validated_data.pop('last_name', ''),
+            'date_of_birth': validated_data.pop('date_of_birth', None),
+            'age': validated_data.pop('age', None),
+            'gender': validated_data.pop('gender', ''),
+            'phone_number': validated_data.pop('phone_number', ''),
+            'country': validated_data.pop('country', ''),
+        }
+        
         user = User.objects.create_user(**validated_data)
+        Profile.objects.create(user=user, **profile_data)
         return user
+    
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
@@ -46,10 +68,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
     
 class RoleUpgradeSerializer(serializers.Serializer):
-    role = serializers.ChoiceField(
-        choices=['host', 'landlord', 'seller'],
-        required=True
-    )
+    ROLE_CHOICES = [
+        ('host', 'Host'),
+        ('landlord', 'Landlord'),
+        ('seller', 'Seller'),
+    ]
+    role_to_upgrade = serializers.ChoiceField(choices=ROLE_CHOICES)
             
         
         

@@ -3,7 +3,7 @@ from .models import Profile,User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from .forms import CustomUserCreationForm,CustomUserChangeForm,ProfileForm
-from .serializers import UserRegistrationSerializer, ProfileSerializer,PasswordChangeSerializer
+from .serializers import UserRegistrationSerializer, UserProfileSerializer,PasswordChangeSerializer, RoleUpgradeSerializer
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,16 +15,26 @@ Creating a loging in section after registering
 """
 def register(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-
-            Profile.objects.create(user=user)
-            auth_login(request, user) 
-            return redirect('homepage') 
+        user_form = CustomUserCreationForm(request.POST)
+        profile_form = ProfileForm(request.POST, request.FILES)
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            auth_login(request, user)
+            return redirect('homepage')
     else:
-        form = CustomUserCreationForm()
-    return render(request, 'accounts/register.html', {'form': form})
+        user_form = CustomUserCreationForm()
+        profile_form = ProfileForm()
+    
+    # Define the context here, outside the if/else blocks
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form
+    }
+    return render(request, 'accounts/register.html', context)
     
 # authentication processes
 @login_required
@@ -117,21 +127,9 @@ class PasswordChangeView(APIView):
             return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
         
     
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserRegistrationSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_queryset(self):
-        return self.queryset.filter(pk=self.request.user.pk)
-
-    @action(detail=False, methods=['GET','PUT', 'PATCH'])
-    def me(self, request):
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
 class ProfileViewSet(viewsets.ModelViewSet):   
     queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+    serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated] 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
@@ -143,27 +141,28 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer.save()
             
 # role upgrades
-class RoleUpgradeAPIView(generics.UpdateAPIView):
-    serializer_class = UserRegistrationSerializer
+class RoleUpgradeAPIView(generics.GenericAPIView):
+    serializer_class = RoleUpgradeSerializer
     permission_classes = [IsAuthenticated]
     
-    def get_object(self):
-        return self.request.user
-    
-    def update(self, request, *args, **kwargs):
-        user = self.get_object()
-        role_choice_upgrade = request.data.get('role','')
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.request.user
+        role = serializer.validated_data['role_to_upgrade']
         
-        if role_choice_upgrade == 'host':
-            user.is_host = True
-        elif role_choice_upgrade == 'landlord':
-            user.is_landlord = True
-        elif role_choice_upgrade == 'seller':
-            user.is_seller = True
-        else:
-            return Response({'message': 'Invalid upgrade request.'}, status=status.HTTP_400_BAD_REQUEST)
+        role_map = {
+            'host': 'is_host',
+            'landlord': 'is_landlord',
+            'seller': 'is_seller',
+        }
         
+        role_attr = role_map[role]
+        
+        if getattr(user, role_attr):
+            return Response({'message': f'You are already a {role}.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        setattr(user, role_attr, True)
         user.save()
-        serializer = self.get_serializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
         
+        return Response({'message': f'Your role has been upgraded to {role} successfully.'}, status=status.HTTP_200_OK)

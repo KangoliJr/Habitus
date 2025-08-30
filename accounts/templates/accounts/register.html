@@ -6,6 +6,12 @@
 <h2>Register</h2>    
 <form method="post">
     {% csrf_token %}
+    <h2>User Details</h2>
+    {{ user_form.as_p }}
+    
+    <h2>Profile Details</h2>
+    {{ profile_form.as_p }}
+    
     {{ form.as_p }}
     <button type="submit">Register</button>
 </form>

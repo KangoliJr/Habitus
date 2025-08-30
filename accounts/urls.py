@@ -7,7 +7,6 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 
 router = DefaultRouter()
-router.register(r'users', views.UserViewSet, basename='user')
 router.register(r'profiles', views.ProfileViewSet, basename='profile')
 app_name = 'accounts'
 
