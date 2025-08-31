@@ -50,18 +50,20 @@ REGISTRATION
 
 http://127.0.0.1:8000/accounts/api/register/
 {
-    "username": "johndoe",
-    "email": "john@example.com",
-    "password": "password123",
-    "first_name": "John",
-    "last_name": "Doe",
+    "username": "james",
+    "email": "james@gmail.com",
+    "password": "Mr.JamesTom@123",
+    "first_name": "James",
+    "last_name": "Tom",
     "date_of_birth": "1990-05-15",
     "age": 35,
     "gender": "male",
     "phone_number": "0712345678",
-    "country": "USA"
+    "country": "CANADA"
 }
 MANAGE USER PROFILE
+Edit profile
+Method Get
 http://127.0.0.1:8000/accounts/api/profiles/<id>/
 {
     "first_name": "John",
@@ -69,13 +71,14 @@ http://127.0.0.1:8000/accounts/api/profiles/<id>/
 }
 
 CHANGE PASSWORD
+Method Post
 http://127.0.0.1:8000/accounts/api/change-password/
 
 {
-    "old_password": "Mrs.Jojo@1234",
-    "new_password": "Mrs.Jojo@12345"
+    "old_password": "Mr.JamesTom@123",
+    "new_password": "Mr.JamesTom@12345"
 }
-Jojo
+
 
 UPGRADE USER ROLE
 http://127.0.0.1:8000/accounts/api/upgrade-role/
@@ -96,12 +99,12 @@ http://127.0.0.1:8000/accounts/api/upgrade-role/
 http://127.0.0.1:8000/airbnb/api/houses/
 
 {
-    "name": "Luxury House in the Suburbs",
+    "name": "Luxury House in the Maldives",
     "description": "A beautiful house with a great view.",
-    "price": 1500.00,
+    "price": 15000.00,
     "furnishing_style": "Fully_Furnished",
-    "bedroom": "3_bedroom",
-    "bathroom": "2_bathroom",
+    "bedroom": "4_bedroom",
+    "bathroom": "3_bathroom",
     "location": "Nairobi",
     "rules": "No parties allowed.",
     "amenities": "Wi-Fi, Pool, Gym"
@@ -113,7 +116,7 @@ http://127.0.0.1:8000/airbnb/api/houses/<house_id>/images/
 PATCH
 http://127.0.0.1:8000/airbnb/api/houses/<house_id>/
 {
-    "price": 1600.00,
+    "price": 16000.00,
     "amenities": "Wi-Fi, Pool, Gym, Smart TV"
 }
 
@@ -155,13 +158,13 @@ Method POST
 http://127.0.0.1:8000/rental/api/houses/
 
 {
-    "name": "Spacious Apartment",
-    "description": "2-bedroom apartment with a great view.",
-    "monthly_rent": 1200.00,
+    "name": "Waterfalls Apartment",
+    "description": "4-bedroom apartment with a great view.",
+    "monthly_rent": 12000.00,
     "security_deposit": 2400.00,
     "furnishing_style": "Semi_Furnished",
-    "bedroom": "2_bedroom",
-    "bathroom": "2_bathroom",
+    "bedroom": "4_bedroom",
+    "bathroom": "3_bathroom",
     "location": "Lavington",
     "rules": "No smoking.",
     "amenities": "Wi-Fi, Balcony, Parking",
@@ -201,12 +204,12 @@ http://127.0.0.1:8000/rental/api/agreements/<agreement_id>/
 Method Post
 http://127.0.0.1:8000/owned-home/api/houses/
 {
-    "name": "Luxury Home",
+    "name": "Luxury Home Estate",
     "description": "A beautiful 3-bedroom house with a garden.",
-    "price": 550000.00,
+    "price": 650000.00,
     "furnishing_style": "Fully_Furnished",
-    "bedroom": "3_bedroom",
-    "bathroom": "2_bathroom",
+    "bedroom": "5_bedroom",
+    "bathroom": "4_bathroom",
     "location": "Karen",
     "rules": "No pets.",
     "amenities": "Swimming Pool, Garage"

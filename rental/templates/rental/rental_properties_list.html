@@ -10,7 +10,7 @@
             <div class="slider">
                 {% for image in house.images.all %}
                 <div class="slide">
-                    <img src="{{ image.images.url }}" alt="{{ house.name }}">
+                    <img src="{{ image.image.url }}" alt="{{ house.name }}">
                 </div>
                 {% endfor %}
                 <button class="prev">&#10094;</button>

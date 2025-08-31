@@ -4,7 +4,7 @@
 <div class="house-details container">
     <div class="slider">
         {% for image in house.images.all %}
-        <img src="{{ image.images.url }}" alt="{{ house.name }}">
+        <img src="{{ image.image.url }}" alt="{{ house.name }}">
         {% endfor %}
     </div>
         <p>Name: {{ house.name }}</p>
