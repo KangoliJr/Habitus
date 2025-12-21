@@ -36,7 +36,7 @@ if you are a host
 @login_required
 def add_airbnb_house(request):
 
-    if not request.user.is_host:
+    if not request.user.profile.is_host:
         messages.error(request, "Be a host to add a new house unit.")
         return redirect('home')  
     
@@ -126,7 +126,10 @@ class BookingViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return self.queryset.filter(customer=self.request.user)
+        if self.request.user.profile.is_host:
+            return Booking.objects.filter(house__host=self.request.user)
+        return Booking.objects.filter(customer=self.request.user)
+        
         
     def perform_create(self, serializer):
         house_id = self.kwargs.get('house_pk')
