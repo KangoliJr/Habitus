@@ -3,7 +3,16 @@ from .models import Profile,User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from .forms import CustomUserCreationForm,CustomUserChangeForm,ProfileForm
-from .serializers import UserRegistrationSerializer, UserProfileSerializer,PasswordChangeSerializer, RoleUpgradeSerializer
+from .serializers import (
+    UserRegistrationSerializer,
+    UserProfileSerializer,
+    PasswordChangeSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer,
+    RoleUpgradeSerializer,
+)
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -125,8 +134,41 @@ class PasswordChangeView(APIView):
             user.set_password(serializer.validated_data['new_password'])
             user.save()
             return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
-        
-    
+
+
+class PasswordResetRequestAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        form = PasswordResetForm({'email': serializer.validated_data['email']})
+        if form.is_valid():
+            form.save(
+                request=request,
+                use_https=request.is_secure(),
+                email_template_name='accounts/password_reset_email.html',
+                subject_template_name='accounts/password_reset_subject.txt',
+                token_generator=default_token_generator,
+            )
+        return Response(
+            {'message': 'If an account exists with that email, a reset link has been sent.'},
+            status=status.HTTP_200_OK,
+        )
+
+
+class PasswordResetConfirmAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        return Response({'message': 'Password has been reset. You can log in with your new password.'}, status=status.HTTP_200_OK)
+
+
 class ProfileViewSet(viewsets.ModelViewSet):   
     queryset = Profile.objects.all()
     serializer_class = UserProfileSerializer

@@ -3,6 +3,10 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core import mail
 
 User = get_user_model()
 # Create your tests here.
@@ -92,3 +96,60 @@ class AccountTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user.refresh_from_db()
         self.assertTrue(user.is_host)
+
+    def test_user_can_request_password_reset(self):
+        self.test_user_registration()
+        url = reverse('accounts:api_password_reset')
+        response = self.client.post(url, {'email': 'test@gmail.com'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_user_can_confirm_password_reset(self):
+        self.test_user_registration()
+        user = User.objects.get(username='testuser')
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        url = reverse('accounts:api_password_reset_confirm')
+        response = self.client.post(
+            url,
+            {'uid': uid, 'token': token, 'new_password': 'brandNewPass123'},
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password('brandNewPass123'))
+
+
+class AccountWebPasswordTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='webuser',
+            email='webuser@example.com',
+            password='password123',
+        )
+
+    def test_forgot_password_page_loads(self):
+        response = self.client.get(reverse('accounts:password_reset'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_forgot_password_sends_email(self):
+        response = self.client.post(
+            reverse('accounts:password_reset'),
+            {'email': 'webuser@example.com'},
+        )
+        self.assertRedirects(response, reverse('accounts:password_reset_done'))
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_logged_in_user_can_change_password(self):
+        self.client.login(username='webuser', password='password123')
+        response = self.client.post(
+            reverse('accounts:password_change'),
+            {
+                'old_password': 'password123',
+                'new_password1': 'brandNewPass123',
+                'new_password2': 'brandNewPass123',
+            },
+        )
+        self.assertRedirects(response, reverse('accounts:password_change_done'))
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('brandNewPass123'))

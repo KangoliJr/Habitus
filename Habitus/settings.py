@@ -169,5 +169,11 @@ MEDIA_ROOT  = os.path.join(BASE_DIR, "media/")
 MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'accounts.User'
-LOGIN_REDIRECT_URL = '/' 
+LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Development: print password-reset emails in the runserver console.
+# Switch to SMTP (or another real backend) before production.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Habitus <noreply@habitus.local>'
